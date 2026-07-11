@@ -1,0 +1,9 @@
+@"
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.db
+.next/
+"@ | Out-File -FilePath .gitignore -Encoding utf8
+dataset/
