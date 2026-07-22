@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # VisionInspectAI
 
 AI-powered visual inspection system for automated defect detection in manufacturing. VisionInspectAI uses computer vision and deep learning to identify anomalies in product images, helping quality control teams catch defects faster and more consistently than manual inspection.
@@ -122,3 +123,40 @@ This project uses per-contributor branches. Changes should be pushed to your own
 ## License
 
 *(Add license details here.)*
+=======
+# VisionInspect AI - Premium Defect Detection Console
+
+VisionInspect AI is an enterprise-grade manufacturing quality control system powered by Computer Vision and AI. It automates product scanning, localizes defect regions, computes severity heatmaps, tracks rework processes, and generates comprehensive factory analytics.
+
+## Technology Stack
+
+- **Backend**: Python 3.10+, FastAPI, SQLAlchemy, JWT Authentication, Bcrypt Password Hashing.
+- **Frontend**: Next.js, React.js, Tailwind CSS, Lucide icons, SVG Gauges & Curves.
+- **Database**: PostgreSQL (relational operational data) + MongoDB (unstructured AI bounding boxes, numpy heatmaps, and logs).
+- **AI & Computer Vision**: PyTorch, torchvision, Ultralytics YOLOv8, OpenCV (CLAHE, Canny, Gaussian).
+- **Monitoring**: FastAPI native log rotations, psutil hardware diagnostics, Prometheus-ready endpoints.
+
+## Refactored Modular Structure
+
+The project has been upgraded to a clean, production-ready architecture:
+- `frontend/`: React Next.js application console.
+- `backend/`: FastAPI server endpoints and configuration.
+- `ai/`: Preprocessing, augmentation, model pipelines (U-Net segmentation, CNN classifier), YOLO wrappers, and training scripts.
+- `models/`: SQLAlchemy tables declarations and Pydantic validation schemas.
+- `services/`: Core logic engines for CRUD database operations, AI pipelines, and hardware stats calculation.
+- `routes/`: FastAPI routes divided by component (Auth, Inspections, Rework, Analytics, Users, production, model).
+- `database/`: PostgreSQL connection setup and MongoDB client wrappers.
+- `authentication/`: Password hashing, JWT token signature validation, and role check dependencies.
+- `utils/`: System-wide log rotation configurations and cpu/memory usage queries.
+- `static/`: Served files assets (uploads, heatmaps, annotation crops).
+- `logs/`: Application error and event logs.
+- `docker/`: Build recipes and multi-container Compose setups.
+- `documentation/`: Extended technical specifications and run manuals.
+
+## Project Guides & Manuals
+
+For detailed instructions, refer to:
+1. **[Installation Guide](file:///d:/VisionInspect_AI/documentation/INSTALLATION_GUIDE.md)**: Setup and run instructions for local Windows/Linux development.
+2. **[API Documentation](file:///d:/VisionInspect_AI/documentation/API_DOCUMENTATION.md)**: Swagger and OpenAPI endpoints overview.
+3. **[Deployment Guide](file:///d:/VisionInspect_AI/documentation/DEPLOYMENT_GUIDE.md)**: Guidelines for running in production environments on AWS ECS or Azure Container Apps using Docker Compose and Nginx.
+>>>>>>> 784b2ee (Updated VisionInspect AI project)

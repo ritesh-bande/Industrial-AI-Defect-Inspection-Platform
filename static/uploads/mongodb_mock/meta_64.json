@@ -1,0 +1,23 @@
+{
+  "inspection_id": 64,
+  "prediction": "Fail",
+  "defect_type": "dent",
+  "severity_level": "high",
+  "confidence_score": 0.7420931606128234,
+  "bounding_boxes": [
+    [
+      50,
+      50,
+      150,
+      150
+    ]
+  ],
+  "processing_speed_ms": 49,
+  "pipeline_logs": [
+    "Inference pipeline triggered.",
+    "CLAHE contrast enhancement applied.",
+    "Canny edge detection performed.",
+    "AI Classification complete."
+  ],
+  "timestamp": "2026-07-17T16:56:38.767253"
+}

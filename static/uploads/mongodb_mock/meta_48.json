@@ -1,0 +1,16 @@
+{
+  "inspection_id": 48,
+  "prediction": "Pass",
+  "defect_type": "none",
+  "severity_level": "none",
+  "confidence_score": 0.37494971765334156,
+  "bounding_boxes": [],
+  "processing_speed_ms": 56,
+  "pipeline_logs": [
+    "Inference pipeline triggered.",
+    "CLAHE contrast enhancement applied.",
+    "Canny edge detection performed.",
+    "AI Classification complete."
+  ],
+  "timestamp": "2026-07-15T16:56:38.767253"
+}

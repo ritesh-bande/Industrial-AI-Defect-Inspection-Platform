@@ -1,0 +1,23 @@
+{
+  "inspection_id": 47,
+  "prediction": "Fail",
+  "defect_type": "missing_component",
+  "severity_level": "low",
+  "confidence_score": 0.8540524236274918,
+  "bounding_boxes": [
+    [
+      50,
+      50,
+      150,
+      150
+    ]
+  ],
+  "processing_speed_ms": 75,
+  "pipeline_logs": [
+    "Inference pipeline triggered.",
+    "CLAHE contrast enhancement applied.",
+    "Canny edge detection performed.",
+    "AI Classification complete."
+  ],
+  "timestamp": "2026-07-15T16:56:38.767253"
+}

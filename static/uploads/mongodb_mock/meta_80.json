@@ -1,0 +1,23 @@
+{
+  "inspection_id": 80,
+  "prediction": "Fail",
+  "defect_type": "crack",
+  "severity_level": "medium",
+  "confidence_score": 0.974744843027409,
+  "bounding_boxes": [
+    [
+      50,
+      50,
+      150,
+      150
+    ]
+  ],
+  "processing_speed_ms": 47,
+  "pipeline_logs": [
+    "Inference pipeline triggered.",
+    "CLAHE contrast enhancement applied.",
+    "Canny edge detection performed.",
+    "AI Classification complete."
+  ],
+  "timestamp": "2026-07-18T16:56:38.767253"
+}
