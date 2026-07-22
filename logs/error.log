@@ -1,6 +1,0 @@
-[2026-07-22 22:24:53,546] ERROR [visioninspect.main:182] - Error seeding database: (sqlite3.OperationalError) no such column: inspections.mongo_metadata_id
-[SQL: SELECT count(*) AS count_1 
-FROM (SELECT inspections.id AS inspections_id, inspections.filename AS inspections_filename, inspections.prediction AS inspections_prediction, inspections.defect_type AS inspections_defect_type, inspections.severity_level AS inspections_severity_level, inspections.score AS inspections_score, inspections.heatmap_url AS inspections_heatmap_url, inspections.batch_number AS inspections_batch_number, inspections.product_id AS inspections_product_id, inspections.production_line AS inspections_production_line, inspections.shift AS inspections_shift, inspections.operator_name AS inspections_operator_name, inspections.review_status AS inspections_review_status, inspections.review_notes AS inspections_review_notes, inspections.created_at AS inspections_created_at, inspections.mongo_metadata_id AS inspections_mongo_metadata_id 
-FROM inspections) AS anon_1]
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-[2026-07-22 22:25:43,565] ERROR [visioninspect.main:182] - Error seeding database: name 'random' is not defined
