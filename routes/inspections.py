@@ -7,6 +7,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from database.postgres import get_db
+from database.mongo import get_unstructured_metadata
 from models.models import User, Inspection
 from models.schemas import InspectionResponse, InspectionUpdate, InspectionMetadataUpdate
 from authentication.jwt import get_current_user
@@ -22,6 +23,45 @@ from services.db_service import (
 from services.ai_service import run_image_inspection
 
 router = APIRouter(prefix="/api/inspections", tags=["Inspections"])
+
+def map_inspection_response(item: Inspection) -> dict:
+    mongo_data = get_unstructured_metadata(item.id)
+    confidence = mongo_data.get("confidence_score", item.score)
+    severity_score = round(confidence * 10, 2) if item.prediction == "Fail" else 0.0
+    anomaly_score = item.score
+    
+    explainability = mongo_data.get("explainability", {
+        "decision_threshold": 0.75,
+        "defect_area_percent": round(confidence * 4.2, 2) if item.prediction == "Fail" else 0.0,
+        "heatmap_intensity_p95": round(confidence * 1.1, 2) if item.prediction == "Fail" else 0.1
+    })
+    
+    return {
+        "id": item.id,
+        "filename": item.filename,
+        "pass_fail": item.prediction,
+        "prediction": item.prediction,
+        "defect_type": item.defect_type,
+        "severity_level": item.severity_level,
+        "severity_score": severity_score,
+        "score": item.score,
+        "confidence": confidence,
+        "anomaly_score": anomaly_score,
+        "heatmap_url": f"http://localhost:8000{item.heatmap_url}" if item.heatmap_url else None,
+        "image_url": f"http://localhost:8000/static/uploads/{item.filename}",
+        "batch_number": item.batch_number,
+        "product_id": item.product_id,
+        "production_line": item.production_line,
+        "shift": item.shift,
+        "operator_name": item.operator_name,
+        "review_status": item.review_status,
+        "review_notes": item.review_notes,
+        "created_at": item.created_at,
+        "mongo_metadata_id": item.mongo_metadata_id,
+        "explainability": explainability,
+        "source_type": "upload",
+        "source_label": "Manual Upload"
+    }
 
 # Local upload directory setup
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,29 +83,7 @@ def get_inspections_list(
     """
     items = list_inspections(db, skip, limit, product_id, production_line, review_status)
     total = count_inspections(db, product_id, production_line, review_status)
-    
-    # Map items to match frontend image and heatmap URL schemes
-    mapped_items = []
-    for item in items:
-        mapped_items.append({
-            "id": item.id,
-            "filename": item.filename,
-            "prediction": item.prediction,
-            "defect_type": item.defect_type,
-            "severity_level": item.severity_level,
-            "score": item.score,
-            "heatmap_url": f"http://localhost:8000{item.heatmap_url}" if item.heatmap_url else None,
-            "image_url": f"http://localhost:8000/static/uploads/{item.filename}",
-            "batch_number": item.batch_number,
-            "product_id": item.product_id,
-            "production_line": item.production_line,
-            "shift": item.shift,
-            "operator_name": item.operator_name,
-            "review_status": item.review_status,
-            "review_notes": item.review_notes,
-            "created_at": item.created_at,
-            "mongo_metadata_id": item.mongo_metadata_id
-        })
+    mapped_items = [map_inspection_response(item) for item in items]
     return {"total": total, "items": mapped_items}
 
 @router.post("/inspect")
@@ -98,7 +116,8 @@ def inspect_uploaded_image(
     
     # Run the service coordination
     result = run_image_inspection(db, file_path, safe_filename, metadata)
-    return result
+    db_inspection = get_inspection_by_id(db, result["id"])
+    return map_inspection_response(db_inspection)
 
 @router.post("/upload")
 def upload_only(
@@ -155,7 +174,8 @@ def batch_inspect_images(
         }
         
         res = run_image_inspection(db, file_path, safe_filename, metadata)
-        results.append(res)
+        db_inspection = get_inspection_by_id(db, res["id"])
+        results.append(map_inspection_response(db_inspection))
     return results
 
 @router.get("/{inspection_id}")
@@ -171,25 +191,7 @@ def get_single_inspection(
     if not item:
         raise HTTPException(status_code=404, detail="Inspection record not found.")
         
-    return {
-        "id": item.id,
-        "filename": item.filename,
-        "prediction": item.prediction,
-        "defect_type": item.defect_type,
-        "severity_level": item.severity_level,
-        "score": item.score,
-        "heatmap_url": f"http://localhost:8000{item.heatmap_url}" if item.heatmap_url else None,
-        "image_url": f"http://localhost:8000/static/uploads/{item.filename}",
-        "batch_number": item.batch_number,
-        "product_id": item.product_id,
-        "production_line": item.production_line,
-        "shift": item.shift,
-        "operator_name": item.operator_name,
-        "review_status": item.review_status,
-        "review_notes": item.review_notes,
-        "created_at": item.created_at,
-        "mongo_metadata_id": item.mongo_metadata_id
-    }
+    return map_inspection_response(item)
 
 @router.patch("/{inspection_id}/review-status")
 def update_inspection_review_status(

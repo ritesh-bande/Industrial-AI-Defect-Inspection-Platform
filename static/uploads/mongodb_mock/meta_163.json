@@ -1,0 +1,38 @@
+{
+  "inspection_id": 163,
+  "prediction": "Fail",
+  "defect_type": "scratch",
+  "severity_level": "high",
+  "confidence_score": 0.85,
+  "bounding_boxes": [
+    [
+      358,
+      358,
+      665,
+      665
+    ]
+  ],
+  "processing_speed_ms": 933,
+  "pipeline_logs": [
+    "[2026-07-24T18:47:36.066474] Starting image preprocessing.",
+    "[2026-07-24T18:47:36.414681] Preprocessing complete. Image resized to 224x224 and normalized.",
+    "[2026-07-24T18:47:36.414736] Running YOLO object detection model.",
+    "[2026-07-24T18:47:36.780994] YOLO empty. Mocking default defect.",
+    "[2026-07-24T18:47:36.781027] Generating defect heatmaps and contour masks.",
+    "[2026-07-24T18:47:36.999472] Bounding boxes and heatmaps stored successfully."
+  ],
+  "preprocessing_details": {
+    "target_resolution": "224x224",
+    "normalization_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "normalization_std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "timestamp": "2026-07-24T18:47:36.999511"
+}

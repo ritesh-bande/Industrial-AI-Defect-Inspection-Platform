@@ -25,12 +25,26 @@ class YOLODetector:
                 logger.error(f"Failed to load YOLO model: {e}. Falling back to simulation.")
                 self.model = None
 
-    def detect(self, image_path: str, confidence_threshold=0.25) -> list:
+    # Industrial defect labels that are valid detections.
+    # Generic COCO classes (toilet, person, bottle etc.) are NOT valid defects.
+    DEFECT_LABELS = {
+        "scratch", "crack", "dent", "missing_component", "surface_damage",
+        "misalignment", "deformation", "corrosion", "contamination", "burr",
+        "chip", "fracture", "hole", "stain", "defect", "anomaly", "broken",
+        "damage", "fault", "flaw", "imperfection", "irregularity"
+    }
+    # Minimum confidence to accept a detection (raised from 0.25 to filter noise)
+    MIN_CONFIDENCE = 0.50
+
+    def detect(self, image_path: str, confidence_threshold=None) -> list:
         """
         Runs YOLO object detection.
+        Returns only industrial defect detections above confidence threshold.
         Returns:
             list of dicts: [ { "box": [xmin, ymin, xmax, ymax], "label": str, "score": float } ]
         """
+        threshold = confidence_threshold if confidence_threshold is not None else self.MIN_CONFIDENCE
+
         if not YOLO_AVAILABLE or self.model is None:
             return self._simulate_detection(image_path)
 
@@ -45,17 +59,17 @@ class YOLODetector:
             
             for box in boxes:
                 # Get coordinates
-                coords = box.xyxy[0].cpu().numpy().tolist() # [xmin, ymin, xmax, ymax]
+                coords = box.xyxy[0].cpu().numpy().tolist()  # [xmin, ymin, xmax, ymax]
                 score = float(box.conf[0].cpu().numpy())
                 cls_id = int(box.cls[0].cpu().numpy())
                 
                 # Retrieve label name from YOLO class names map
-                label = result.names.get(cls_id, f"class_{cls_id}")
+                label = result.names.get(cls_id, f"class_{cls_id}").lower()
                 
-                # Defect naming mapping (normalize to our categories: scratch, crack, dent, missing_component, etc.)
-                # In standard YOLOv8n, classes might be bottle, person, cup etc.
-                # If training custom model, these are the actual defect categories.
-                if score >= confidence_threshold:
+                # Only accept detections that are:
+                # 1. Above the minimum confidence threshold
+                # 2. A known industrial defect label (filter out COCO objects like toilet, person, etc.)
+                if score >= threshold and label in self.DEFECT_LABELS:
                     detections.append({
                         "box": [int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3])],
                         "label": label,

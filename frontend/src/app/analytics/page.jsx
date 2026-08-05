@@ -283,7 +283,7 @@ function ReworkAging({ tickets = [] }) {
           <tbody>
             {tickets.slice(0, 5).map((ticket) => (
               <tr key={ticket.id}>
-                <td>{ticket.ticket_number || ticket.id.slice(-8)}</td>
+                <td>{ticket.ticket_number || String(ticket.id).slice(-8)}</td>
                 <td>{ticket.product_id || "Metadata required"}</td>
                 <td>{ticket.production_line || "Unassigned"}</td>
                 <td>{shortDate(ticket.created_at)}</td>
@@ -419,10 +419,10 @@ export default function AnalyticsPage() {
 
   return (
     <AppShell title="Analytics & Reports" subtitle="">
-      <div className="analytics-tabs flex gap-4 border-b border-gray-200 pb-2 mb-6">
+      <div className="analytics-tabs flex gap-4 border-b border-white/10 pb-2 mb-6">
         <button 
           className={`px-4 py-2 font-medium text-sm transition-all duration-200 border-b-2 ${
-            view === "analytics" ? "border-blue-600 text-blue-600 font-semibold" : "border-transparent text-gray-500 hover:text-gray-700"
+            view === "analytics" ? "border-blue-600 text-lime-400 font-semibold" : "border-transparent text-gray-400 hover:text-gray-200"
           }`} 
           type="button" 
           onClick={() => setView("analytics")}
@@ -431,7 +431,7 @@ export default function AnalyticsPage() {
         </button>
         <button 
           className={`px-4 py-2 font-medium text-sm transition-all duration-200 border-b-2 ${
-            view === "performance" ? "border-blue-600 text-blue-600 font-semibold" : "border-transparent text-gray-500 hover:text-gray-700"
+            view === "performance" ? "border-blue-600 text-lime-400 font-semibold" : "border-transparent text-gray-400 hover:text-gray-200"
           }`} 
           type="button" 
           onClick={() => setView("performance")}
@@ -440,7 +440,7 @@ export default function AnalyticsPage() {
         </button>
         <button 
           className={`px-4 py-2 font-medium text-sm transition-all duration-200 border-b-2 ${
-            view === "reports" ? "border-blue-600 text-blue-600 font-semibold" : "border-transparent text-gray-500 hover:text-gray-700"
+            view === "reports" ? "border-blue-600 text-lime-400 font-semibold" : "border-transparent text-gray-400 hover:text-gray-200"
           }`} 
           type="button" 
           onClick={() => setView("reports")}
@@ -450,11 +450,11 @@ export default function AnalyticsPage() {
       </div>
 
       {view !== "performance" && (
-        <section className="tool-panel analytics-filter-bar mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <section className="tool-panel analytics-filter-bar mb-6 p-4 bg-transparent border border-white/10 rounded-lg shadow-none">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <label className="block text-xs font-medium text-gray-500">
+            <label className="block text-xs font-medium text-gray-400">
               Date Range
-              <span className="filter-control mt-1 flex items-center gap-2 border p-2 rounded-md bg-gray-50">
+              <span className="filter-control mt-1 flex items-center gap-2 border p-2 rounded-md bg-transparent">
                 <CalendarDays size={15} />
                 <input
                   type="date"
@@ -464,10 +464,10 @@ export default function AnalyticsPage() {
                 />
               </span>
             </label>
-            <label className="block text-xs font-medium text-gray-500">
+            <label className="block text-xs font-medium text-gray-400">
               Product
               <select
-                className="mt-1 w-full p-2 border rounded-md bg-gray-50 text-sm"
+                className="mt-1 w-full p-2 border rounded-md bg-transparent text-sm"
                 value={filters.productId}
                 onChange={(event) => setFilters((current) => ({ ...current, productId: event.target.value }))}
               >
@@ -479,10 +479,10 @@ export default function AnalyticsPage() {
                 ))}
               </select>
             </label>
-            <label className="block text-xs font-medium text-gray-500">
+            <label className="block text-xs font-medium text-gray-400">
               Production Line
               <select
-                className="mt-1 w-full p-2 border rounded-md bg-gray-50 text-sm"
+                className="mt-1 w-full p-2 border rounded-md bg-transparent text-sm"
                 value={filters.productionLine}
                 onChange={(event) => setFilters((current) => ({ ...current, productionLine: event.target.value }))}
               >
@@ -494,10 +494,10 @@ export default function AnalyticsPage() {
                 ))}
               </select>
             </label>
-            <label className="block text-xs font-medium text-gray-500">
+            <label className="block text-xs font-medium text-gray-400">
               Defect Type
               <select
-                className="mt-1 w-full p-2 border rounded-md bg-gray-50 text-sm"
+                className="mt-1 w-full p-2 border rounded-md bg-transparent text-sm"
                 value={filters.defectType}
                 onChange={(event) => setFilters((current) => ({ ...current, defectType: event.target.value }))}
               >
@@ -509,7 +509,7 @@ export default function AnalyticsPage() {
                 ))}
               </select>
             </label>
-            <button className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md text-sm font-semibold flex items-center justify-center gap-2" type="button" onClick={loadPageData}>
+            <button className="px-4 py-2 bg-lime-400 text-white hover:bg-lime-300 rounded-md text-sm font-semibold flex items-center justify-center gap-2" type="button" onClick={loadPageData}>
               <Filter size={16} />
               Filter
             </button>
@@ -520,7 +520,7 @@ export default function AnalyticsPage() {
       {view !== "performance" && (
         <div className="page-actions compact analytics-actions flex gap-4 justify-between items-center mb-6">
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50 text-sm flex items-center gap-1.5" type="button" onClick={loadPageData}>
+            <button className="px-3 py-1.5 border border-white/10 rounded-md hover:bg-transparent text-sm flex items-center gap-1.5" type="button" onClick={loadPageData}>
               <RefreshCw className={loading ? "spin" : ""} size={16} />
               Refresh
             </button>
@@ -573,41 +573,41 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* AI Core Stats */}
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-1">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">AI Model Metrics</h2>
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-1">
+              <h2 className="text-lg font-semibold text-white mb-4 border-b pb-2">AI Model Metrics</h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-gray-600">Model Accuracy</span>
-                  <strong className="text-lg text-blue-600">{percent(perfMetrics?.ai_performance?.accuracy || 0.9525)}</strong>
+                  <span className="text-sm text-gray-400">Model Accuracy</span>
+                  <strong className="text-lg text-lime-400">{percent(perfMetrics?.ai_performance?.accuracy || 0.9525)}</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-gray-600">Precision</span>
-                  <strong className="text-lg text-blue-600">{percent(perfMetrics?.ai_performance?.precision || 0.9412)}</strong>
+                  <span className="text-sm text-gray-400">Precision</span>
+                  <strong className="text-lg text-lime-400">{percent(perfMetrics?.ai_performance?.precision || 0.9412)}</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-gray-600">Recall</span>
-                  <strong className="text-lg text-blue-600">{percent(perfMetrics?.ai_performance?.recall || 0.9639)}</strong>
+                  <span className="text-sm text-gray-400">Recall</span>
+                  <strong className="text-lg text-lime-400">{percent(perfMetrics?.ai_performance?.recall || 0.9639)}</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-gray-600">F1-Score</span>
-                  <strong className="text-lg text-blue-600">{percent(perfMetrics?.ai_performance?.f1_score || 0.9524)}</strong>
+                  <span className="text-sm text-gray-400">F1-Score</span>
+                  <strong className="text-lg text-lime-400">{percent(perfMetrics?.ai_performance?.f1_score || 0.9524)}</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-gray-600">mAP Score</span>
+                  <span className="text-sm text-gray-400">mAP Score</span>
                   <strong className="text-lg text-purple-600">{percent(perfMetrics?.ai_performance?.map_score || 0.9380)}</strong>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-gray-600">Mean IoU</span>
+                  <span className="text-sm text-gray-400">Mean IoU</span>
                   <strong className="text-lg text-purple-600">{percent(perfMetrics?.ai_performance?.iou || 0.8420)}</strong>
                 </div>
               </div>
             </section>
 
             {/* ROC Curve Graph */}
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-1">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">ROC Curve</h2>
-              <p className="text-xs text-gray-500 mb-4">True Positive vs False Positive rates.</p>
-              <svg className="w-full h-48 border border-gray-100 bg-gray-50 rounded" viewBox="0 0 200 200">
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-1">
+              <h2 className="text-lg font-semibold text-white mb-2">ROC Curve</h2>
+              <p className="text-xs text-gray-400 mb-4">True Positive vs False Positive rates.</p>
+              <svg className="w-full h-48 border border-white/5 bg-transparent rounded" viewBox="0 0 200 200">
                 {/* diagonal guideline */}
                 <line x1="20" y1="180" x2="180" y2="20" stroke="#d1d5db" strokeDasharray="3" />
                 {/* ROC Curve line */}
@@ -628,10 +628,10 @@ export default function AnalyticsPage() {
             </section>
 
             {/* PR Curve Graph */}
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-1">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">Precision-Recall Curve</h2>
-              <p className="text-xs text-gray-500 mb-4">Trade-off between precision and recall values.</p>
-              <svg className="w-full h-48 border border-gray-100 bg-gray-50 rounded" viewBox="0 0 200 200">
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-1">
+              <h2 className="text-lg font-semibold text-white mb-2">Precision-Recall Curve</h2>
+              <p className="text-xs text-gray-400 mb-4">Trade-off between precision and recall values.</p>
+              <svg className="w-full h-48 border border-white/5 bg-transparent rounded" viewBox="0 0 200 200">
                 {/* PR Curve line */}
                 <path
                   d={`M 20 20 ${(perfMetrics?.ai_performance?.pr_curve || []).map((pt, idx) => {
@@ -652,31 +652,31 @@ export default function AnalyticsPage() {
 
           {/* Manufacturing Performance Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-3">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Manufacturing Performance</h2>
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-3">
+              <h2 className="text-lg font-semibold text-white mb-4 border-b pb-2">Manufacturing Performance</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">Automation Rate</small>
-                  <strong className="text-2xl text-blue-600 block mt-2">{perfMetrics?.manufacturing_performance?.inspection_automation_rate || 96.8}%</strong>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">Automation Rate</small>
+                  <strong className="text-2xl text-lime-400 block mt-2">{perfMetrics?.manufacturing_performance?.inspection_automation_rate || 96.8}%</strong>
                 </div>
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">Detection Accuracy</small>
-                  <strong className="text-2xl text-blue-600 block mt-2">{perfMetrics?.manufacturing_performance?.defect_detection_accuracy || 95.25}%</strong>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">Detection Accuracy</small>
+                  <strong className="text-2xl text-lime-400 block mt-2">{perfMetrics?.manufacturing_performance?.defect_detection_accuracy || 95.25}%</strong>
                 </div>
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">False Positive Rate</small>
-                  <strong className="text-2xl text-red-600 block mt-2">{perfMetrics?.manufacturing_performance?.false_positive_rate || 3.4}%</strong>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">False Positive Rate</small>
+                  <strong className="text-2xl text-red-400 block mt-2">{perfMetrics?.manufacturing_performance?.false_positive_rate || 3.4}%</strong>
                 </div>
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">False Negative Rate</small>
-                  <strong className="text-2xl text-red-600 block mt-2">{perfMetrics?.manufacturing_performance?.false_negative_rate || 3.8}%</strong>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">False Negative Rate</small>
+                  <strong className="text-2xl text-red-400 block mt-2">{perfMetrics?.manufacturing_performance?.false_negative_rate || 3.8}%</strong>
                 </div>
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">Identification Acc.</small>
-                  <strong className="text-2xl text-green-600 block mt-2">{perfMetrics?.manufacturing_performance?.defect_identification_accuracy || 94.12}%</strong>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">Identification Acc.</small>
+                  <strong className="text-2xl text-lime-400 block mt-2">{perfMetrics?.manufacturing_performance?.defect_identification_accuracy || 94.12}%</strong>
                 </div>
-                <div className="p-4 bg-gray-50 rounded border">
-                  <small className="text-xs text-gray-500 block uppercase font-medium">Rework Rate</small>
+                <div className="p-4 bg-transparent rounded border">
+                  <small className="text-xs text-gray-400 block uppercase font-medium">Rework Rate</small>
                   <strong className="text-2xl text-amber-600 block mt-2">{perfMetrics?.manufacturing_performance?.rework_percentage || 6.8}%</strong>
                 </div>
               </div>
@@ -686,52 +686,52 @@ export default function AnalyticsPage() {
           {/* System Performance Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* System Speeds */}
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-1">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Response & Speeds</h2>
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-1">
+              <h2 className="text-lg font-semibold text-white mb-4 border-b pb-2">Response & Speeds</h2>
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between items-center py-2 border-b">
                   <span>Image Preprocessing Speed</span>
-                  <strong className="text-gray-700">{perfMetrics?.system_performance?.image_processing_speed_ms || 32.4} ms</strong>
+                  <strong className="text-gray-200">{perfMetrics?.system_performance?.image_processing_speed_ms || 32.4} ms</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
                   <span>API Roundtrip Response</span>
-                  <strong className="text-gray-700">{perfMetrics?.system_performance?.api_response_time_ms || 14.8} ms</strong>
+                  <strong className="text-gray-200">{perfMetrics?.system_performance?.api_response_time_ms || 14.8} ms</strong>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b">
                   <span>Average Inference Time</span>
-                  <strong className="text-gray-700">{perfMetrics?.system_performance?.average_inspection_time_ms || 115.6} ms</strong>
+                  <strong className="text-gray-200">{perfMetrics?.system_performance?.average_inspection_time_ms || 115.6} ms</strong>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span>Concurrent Scan Limit</span>
-                  <strong className="text-gray-700">{perfMetrics?.system_performance?.concurrent_inspection_capability || 128} sessions</strong>
+                  <strong className="text-gray-200">{perfMetrics?.system_performance?.concurrent_inspection_capability || 128} sessions</strong>
                 </div>
               </div>
             </section>
 
             {/* Hardware Loads */}
-            <section className="tool-panel bg-white border border-gray-200 rounded-lg shadow-sm p-6 lg:col-span-2">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Hardware Resource Utilization</h2>
+            <section className="tool-panel bg-transparent border border-white/10 rounded-lg shadow-none p-6 lg:col-span-2">
+              <h2 className="text-lg font-semibold text-white mb-4 border-b pb-2">Hardware Resource Utilization</h2>
               <div className="grid grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <span className="text-xs text-gray-500 font-semibold">CPU Usage</span>
-                  <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden border">
-                    <div className="bg-blue-500 h-full transition-all duration-300" style={{ width: `${perfMetrics?.system_performance?.cpu_usage_pct || 18}%` }}></div>
+                  <span className="text-xs text-gray-400 font-semibold">CPU Usage</span>
+                  <div className="w-full bg-transparent rounded-full h-4 overflow-hidden border">
+                    <div className="bg-lime-400 h-full transition-all duration-300" style={{ width: `${perfMetrics?.system_performance?.cpu_usage_pct || 18}%` }}></div>
                   </div>
-                  <strong className="text-gray-700 text-sm block mt-1">{perfMetrics?.system_performance?.cpu_usage_pct || 18.0}%</strong>
+                  <strong className="text-gray-200 text-sm block mt-1">{perfMetrics?.system_performance?.cpu_usage_pct || 18.0}%</strong>
                 </div>
                 <div className="space-y-2">
-                  <span className="text-xs text-gray-500 font-semibold">GPU Usage</span>
-                  <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden border">
+                  <span className="text-xs text-gray-400 font-semibold">GPU Usage</span>
+                  <div className="w-full bg-transparent rounded-full h-4 overflow-hidden border">
                     <div className="bg-green-500 h-full transition-all duration-300" style={{ width: `${perfMetrics?.system_performance?.gpu_usage_pct || 8}%` }}></div>
                   </div>
-                  <strong className="text-gray-700 text-sm block mt-1">{perfMetrics?.system_performance?.gpu_usage_pct || 8.0}%</strong>
+                  <strong className="text-gray-200 text-sm block mt-1">{perfMetrics?.system_performance?.gpu_usage_pct || 8.0}%</strong>
                 </div>
                 <div className="space-y-2">
-                  <span className="text-xs text-gray-500 font-semibold">RAM Usage</span>
-                  <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden border">
+                  <span className="text-xs text-gray-400 font-semibold">RAM Usage</span>
+                  <div className="w-full bg-transparent rounded-full h-4 overflow-hidden border">
                     <div className="bg-purple-500 h-full transition-all duration-300" style={{ width: `${perfMetrics?.system_performance?.memory_usage_pct || 42}%` }}></div>
                   </div>
-                  <strong className="text-gray-700 text-sm block mt-1">{perfMetrics?.system_performance?.memory_usage_pct || 42.0}%</strong>
+                  <strong className="text-gray-200 text-sm block mt-1">{perfMetrics?.system_performance?.memory_usage_pct || 42.0}%</strong>
                 </div>
               </div>
             </section>

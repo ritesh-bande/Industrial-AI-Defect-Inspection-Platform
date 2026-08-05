@@ -1,7 +1,13 @@
 import { apiGet, apiPost, setAuthToken } from "./api";
 
 export async function registerUser(payload) {
-  return apiPost("/api/auth/register", payload, { token: null });
+  const backendPayload = {
+    username: payload.name || payload.username || "",
+    email: payload.email,
+    password: payload.password,
+    role: payload.role || "operator"
+  };
+  return apiPost("/api/auth/register", backendPayload, { token: null });
 }
 
 export async function login(payload) {

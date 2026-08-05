@@ -1,0 +1,31 @@
+{
+  "inspection_id": 156,
+  "prediction": "Pass",
+  "defect_type": "none",
+  "severity_level": "none",
+  "confidence_score": 0.0,
+  "bounding_boxes": [],
+  "processing_speed_ms": 3843,
+  "pipeline_logs": [
+    "[2026-07-24T13:06:28.476472] Starting image preprocessing.",
+    "[2026-07-24T13:06:29.330109] Preprocessing complete. Image resized to 224x224 and normalized.",
+    "[2026-07-24T13:06:29.330216] Running YOLO object detection model.",
+    "[2026-07-24T13:06:32.136846] YOLO detected no defects.",
+    "[2026-07-24T13:06:32.136892] Generating defect heatmaps and contour masks.",
+    "[2026-07-24T13:06:32.320257] Bounding boxes and heatmaps stored successfully."
+  ],
+  "preprocessing_details": {
+    "target_resolution": "224x224",
+    "normalization_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "normalization_std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "timestamp": "2026-07-24T13:06:32.320385"
+}

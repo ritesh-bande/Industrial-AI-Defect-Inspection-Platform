@@ -55,6 +55,8 @@ from routes.analytics import router as analytics_router
 from routes.users import router as users_router
 from routes.production import router as production_router
 from routes.model import router as model_router
+from routes.reports import router as reports_router
+from routes.finetune import router as finetune_router
 
 app.include_router(auth_router)
 app.include_router(inspections_router)
@@ -63,6 +65,8 @@ app.include_router(analytics_router)
 app.include_router(users_router)
 app.include_router(production_router)
 app.include_router(model_router)
+app.include_router(reports_router)
+app.include_router(finetune_router)
 
 # 3. Seed script on startup
 def seed_data():
@@ -191,19 +195,58 @@ seed_data()
 @app.get("/health", tags=["Health"])
 def health_check():
     """
-    Returns API runtime health and active AI components statuses.
+    Returns API runtime health, real DB connectivity, and active AI components statuses.
     """
-    import psutil
     from utils.system_stats import get_system_metrics
-    sys_metrics = get_system_metrics()
-    
+    try:
+        sys_metrics = get_system_metrics()
+    except Exception:
+        sys_metrics = {}
+
     # Check model loading status
-    from ai.inference import classification_model, segmentation_model, YOLO_AVAILABLE
-    
+    try:
+        from ai.inference import classification_model, segmentation_model, YOLO_AVAILABLE
+    except Exception:
+        classification_model = None
+        segmentation_model = None
+        YOLO_AVAILABLE = False
+
+    # PostgreSQL / SQLite connectivity check
+    postgres_status = "connected"
+    postgres_type = "postgresql"
+    try:
+        import sqlalchemy
+        from database.postgres import SessionLocal as _SL, DATABASE_URL as _DB_URL
+        if "sqlite" in _DB_URL:
+            postgres_type = "sqlite"
+        _db = _SL()
+        _db.execute(sqlalchemy.text("SELECT 1"))
+        _db.close()
+    except Exception as _e:
+        postgres_status = "disconnected"
+        postgres_type = "unknown"
+
+    # MongoDB / file-fallback connectivity check
+    mongo_status = "connected"
+    mongo_type = "mongodb"
+    try:
+        from database.mongo import db_client as _mc, is_mock as _im
+        if _im or _mc is None:
+            mongo_type = "file_fallback"
+        else:
+            _mc.admin.command("ping")
+    except Exception:
+        mongo_status = "disconnected"
+        mongo_type = "unknown"
+
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "database": "connected",
+        "database": postgres_status,
+        "postgres": postgres_status,
+        "postgres_type": postgres_type,
+        "mongo": mongo_status,
+        "mongo_type": mongo_type,
         "system": sys_metrics,
         "artifacts": {
             "padim_checkpoint": True,
@@ -213,7 +256,6 @@ def health_check():
             "yolo_library": YOLO_AVAILABLE
         }
     }
-
 @app.get("/", include_in_schema=False)
 def root_redirect():
     """Redirects route root requests directly to FastAPI OpenAPI docs"""

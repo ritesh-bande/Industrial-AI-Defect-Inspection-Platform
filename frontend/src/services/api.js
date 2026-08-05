@@ -70,7 +70,8 @@ export function setAuthToken(token) {
 }
 
 export async function apiRequest(path, options = {}) {
-  const token = Object.prototype.hasOwnProperty.call(options, "token") ? options.token : getAuthToken();
+  const { token: optToken, ...fetchOptions } = options;
+  const token = optToken !== undefined ? optToken : getAuthToken();
   const headers = new Headers(options.headers || {});
 
   if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -79,7 +80,7 @@ export async function apiRequest(path, options = {}) {
   }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
+    ...fetchOptions,
     headers,
   });
 

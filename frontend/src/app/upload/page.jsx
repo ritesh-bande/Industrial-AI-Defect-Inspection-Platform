@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, FileText, ScanSearch } from "lucide-react";
+import { CheckCircle2, FileText, ScanSearch, Wrench } from "lucide-react";
 
 import AppShell from "../../components/AppShell";
 import BatchInspectionResults from "../../components/BatchInspectionResults";
@@ -10,7 +10,7 @@ import ImageUpload from "../../components/ImageUpload";
 import InspectionResult from "../../components/InspectionResult";
 import ProductionMetadataForm, { EMPTY_CATALOG, EMPTY_METADATA } from "../../components/ProductionMetadataForm";
 import { createInspectionReport } from "../../services/reportApi";
-import { inspectBatch, inspectImage } from "../../services/inspectionApi";
+import { inspectBatch, inspectImage, updateReviewStatus } from "../../services/inspectionApi";
 import { getProductionCatalog } from "../../services/productionApi";
 
 export default function UploadPage() {
@@ -34,6 +34,7 @@ export default function UploadPage() {
     }
     const nextPreviewUrl = URL.createObjectURL(file);
     setPreviewUrl(nextPreviewUrl);
+    setResult(null); // Reset previous inspection results when a new file is uploaded
     return () => URL.revokeObjectURL(nextPreviewUrl);
   }, [file]);
 
@@ -103,6 +104,23 @@ export default function UploadPage() {
     }
   }
 
+  async function handleSendToRework() {
+    if (!result?.id) return;
+    setFailure(null);
+    try {
+      const res = await updateReviewStatus(result.id, "sent_for_rework", "Sent for rework from upload inspection interface.");
+      setMessage(`Sent to Rework Queue! Ticket: ${res.rework_ticket_number || "Created"}`);
+      setResult(prev => ({ ...prev, review_status: "sent_for_rework" }));
+    } catch (err) {
+      setFailure({
+        title: "Rework submission failed",
+        message: err.message || "Could not send item to rework queue.",
+        status: err.status,
+        requestId: err.requestId,
+      });
+    }
+  }
+
   return (
     <AppShell title="Image Inspection" subtitle="Upload a product image and run AI defect detection.">
       <section className="workflow-banner">
@@ -142,7 +160,7 @@ export default function UploadPage() {
             <div className="panel-heading">
               <div>
                 <h2>Inspection Actions</h2>
-                <p>Generate reports after a successful result.</p>
+                <p>Generate reports or submit to rework queue.</p>
               </div>
               <ScanSearch size={22} />
             </div>
@@ -150,6 +168,10 @@ export default function UploadPage() {
               <button className="ghost-button" type="button" onClick={handleReport} disabled={!result?.id}>
                 <FileText size={16} />
                 Generate PDF report
+              </button>
+              <button className="primary-button" type="button" onClick={handleSendToRework} disabled={!result?.id}>
+                <Wrench size={16} />
+                Send to Rework Queue
               </button>
               {message ? <span className="inline-success">{message}</span> : null}
             </div>

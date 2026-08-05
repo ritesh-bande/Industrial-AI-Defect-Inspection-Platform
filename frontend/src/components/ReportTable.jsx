@@ -9,12 +9,15 @@ function reportCode(report) {
     date && !Number.isNaN(date.getTime())
       ? `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}`
       : "REPORT";
-  const suffix = (report.id || report.inspection_id || "0000").slice(-4).toUpperCase();
+  const idStr = String(report.id ?? report.inspection_id ?? "0000");
+  const suffix = idStr.slice(-4).toUpperCase();
   return `RPT-${datePart}-${suffix}`;
 }
 
-function shortInspectionId(value = "") {
-  return value ? `Inspection ${value.slice(0, 8).toUpperCase()}` : "Inspection pending";
+function shortInspectionId(value) {
+  if (value === null || value === undefined || value === "") return "Inspection pending";
+  const valStr = String(value);
+  return `Inspection ${valStr.slice(0, 8).toUpperCase()}`;
 }
 
 export default function ReportTable({ reports, onError }) {

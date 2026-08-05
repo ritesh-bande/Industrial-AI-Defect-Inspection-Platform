@@ -1,0 +1,57 @@
+
+> visioninspect-ai-frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.20.10.3:3000
+- Environments: .env.local
+✓ Ready in 676ms
+
+ GET / 307 in 4.6s (next.js: 4.3s, application-code: 281ms)
+ GET /dashboard 200 in 1113ms (next.js: 914ms, application-code: 199ms)
+ GET / 307 in 307ms (next.js: 50ms, application-code: 257ms)
+ GET /dashboard 200 in 131ms (next.js: 7ms, application-code: 124ms)
+ GET /login 200 in 1321ms (next.js: 1235ms, application-code: 85ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /dashboard 200 in 57ms (next.js: 6ms, application-code: 52ms)
+ GET /upload 200 in 1226ms (next.js: 1152ms, application-code: 74ms)
+ GET /upload 200 in 174ms (next.js: 6ms, application-code: 168ms)
+ GET /dashboard 200 in 58ms (next.js: 11ms, application-code: 47ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /upload 200 in 46ms (next.js: 7ms, application-code: 39ms)
+ GET /dashboard 200 in 48ms (next.js: 7ms, application-code: 41ms)
+✓ Compiled in 931ms
+✓ Compiled in 843ms
+✓ Compiled in 766ms
+✓ Compiled in 857ms
+ GET /dashboard 200 in 1776ms (next.js: 543ms, application-code: 1233ms)
+ GET /dashboard 200 in 858ms (next.js: 250ms, application-code: 608ms)
+ GET /dashboard 200 in 242ms (next.js: 34ms, application-code: 208ms)
+ GET /dashboard 200 in 235ms (next.js: 122ms, application-code: 113ms)
+✓ Compiled in 409ms
+ GET /dashboard 200 in 799ms (next.js: 338ms, application-code: 461ms)
+ GET /dashboard 200 in 228ms (next.js: 34ms, application-code: 195ms)
+✓ Compiled in 927ms
+ GET /dashboard 200 in 1306ms (next.js: 418ms, application-code: 888ms)
+ GET /dashboard 200 in 461ms (next.js: 42ms, application-code: 419ms)
+ GET /dashboard 200 in 243ms (next.js: 48ms, application-code: 195ms)
+ GET /dashboard 200 in 773ms (next.js: 15ms, application-code: 758ms)
+ GET /upload 200 in 226ms (next.js: 145ms, application-code: 81ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /camera 200 in 1840ms (next.js: 1716ms, application-code: 124ms)
+[browser] ⨯ unhandledRejection: ApiError: path.inspection_id: Input should be a valid integer, unable to parse string as an integer
+    at apiRequest (src/services/api.js:91:11)
+    at async loadSamples (src/app/camera/page.jsx:26:16)
+  89 |   if (!response.ok) {
+  90 |     const normalized = normalizeErrorPayload(payload);
+> 91 |     throw new ApiError(normalized.message, {
+     |           ^
+  92 |       status: response.status,
+  93 |       code: normalized.code,
+  94 |       details: normalized.details,
+ GET /login 200 in 420ms (next.js: 31ms, application-code: 389ms)
+ GET /dashboard 200 in 58ms (next.js: 9ms, application-code: 49ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /upload 200 in 55ms (next.js: 7ms, application-code: 48ms)
+ GET /model-metrics 200 in 1535ms (next.js: 1437ms, application-code: 99ms)

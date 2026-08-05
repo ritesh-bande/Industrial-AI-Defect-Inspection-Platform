@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  Cpu,
   Factory,
   FileText,
   Gauge,
@@ -80,6 +81,13 @@ const navItems = [
     section: "Models",
     roles: ["admin", "quality_manager"],
   },
+  {
+    href: "/finetune",
+    label: "Fine-Tune Models",
+    icon: Cpu,
+    section: "Models",
+    roles: ["admin", "quality_manager"],
+  },
   { href: "/users", label: "Users", icon: Users, section: "Admin", roles: ["admin", "quality_manager"] },
   {
     href: "/profile",
@@ -118,7 +126,11 @@ export default function Sidebar({ user, collapsed = false, onToggleCollapse }) {
     <aside className={collapsed ? "sidebar collapsed" : "sidebar"}>
       <Link href="/dashboard" className="brand" aria-label="VisionInspect AI dashboard" data-label="VisionInspect AI">
         <span className="brand-mark">
-          <Factory size={22} />
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+            <path d="M6 4H20L17 9H3L6 4Z" fill="var(--neon-lime)" />
+            <path d="M8 11H17L14 16H5L8 11Z" fill="var(--neon-lime)" />
+            <path d="M10 18H14L11 23H7L10 18Z" fill="var(--neon-lime)" />
+          </svg>
         </span>
         <span>
           <strong>VisionInspect AI</strong>

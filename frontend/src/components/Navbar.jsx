@@ -46,6 +46,28 @@ export default function Navbar({ title, subtitle, user }) {
         {subtitle ? <p>{subtitle}</p> : null}
       </div>
       <div className="topbar-actions" ref={topbarMenuRef}>
+        <button
+          className="icon-link search-button"
+          type="button"
+          aria-label="Search"
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            display: 'grid',
+            placeItems: 'center',
+            color: 'var(--muted)',
+            cursor: 'pointer',
+            marginRight: '6px'
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
         <div className="topbar-menu-wrap">
           <button
             className="icon-link notification-button"
@@ -79,10 +101,25 @@ export default function Navbar({ title, subtitle, user }) {
         </div>
         {user ? (
           <div className="topbar-menu-wrap">
-            <button className="user-pill user-menu-button" type="button" onClick={() => toggleMenu("user")}>
-              <strong>{user.name}</strong>
-              <small>{user.role}</small>
-              <ChevronDown size={14} />
+            <button
+              className="user-pill user-menu-button"
+              type="button"
+              onClick={() => toggleMenu("user")}
+              style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '24px', padding: '6px 14px' }}
+            >
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(212, 255, 42, 0.1)', border: '1px solid var(--neon-lime)', display: 'grid', placeItems: 'center', overflow: 'hidden' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--neon-lime)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: '1.2' }}>
+                <strong style={{ fontSize: '13px', fontWeight: '600', color: '#ffffff' }}>{user.name || user.username}</strong>
+                <small style={{ fontSize: '10px', color: 'var(--neon-lime)', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: '500' }}>
+                  ★ 4.9 ({user.role})
+                </small>
+              </div>
+              <ChevronDown size={12} style={{ opacity: 0.6, marginLeft: '2px' }} />
             </button>
             {openMenu === "user" ? (
               <div className="topbar-dropdown user-dropdown">

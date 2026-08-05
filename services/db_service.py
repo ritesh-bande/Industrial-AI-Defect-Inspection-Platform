@@ -129,8 +129,11 @@ def get_rework_ticket_by_id(db: Session, idx: int) -> Optional[ReworkTicket]:
 def get_rework_ticket_by_inspection_id(db: Session, inspection_id: int) -> Optional[ReworkTicket]:
     return db.query(ReworkTicket).filter(ReworkTicket.inspection_id == inspection_id).first()
 
-def list_rework_tickets(db: Session) -> List[ReworkTicket]:
-    return db.query(ReworkTicket).order_by(desc(ReworkTicket.created_at)).all()
+def list_rework_tickets(db: Session, status: Optional[str] = None) -> List[ReworkTicket]:
+    query = db.query(ReworkTicket)
+    if status:
+        query = query.filter(ReworkTicket.status == status)
+    return query.order_by(desc(ReworkTicket.created_at)).all()
 
 def update_rework_ticket(db: Session, ticket_id: int, payload: dict) -> Optional[ReworkTicket]:
     db_ticket = get_rework_ticket_by_id(db, ticket_id)

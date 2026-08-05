@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from database.postgres import get_db
 from models.models import User
@@ -18,13 +18,14 @@ router = APIRouter(prefix="/api/rework/tickets", tags=["Rework Tickets"])
 
 @router.get("", response_model=List[ReworkTicketResponse])
 def get_all_tickets(
+    status: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     List all rework tickets in order of creation.
     """
-    return list_rework_tickets(db)
+    return list_rework_tickets(db, status=status)
 
 @router.get("/by-inspection/{inspection_id}", response_model=ReworkTicketResponse)
 def get_ticket_by_inspection(

@@ -8,7 +8,7 @@ import { getCurrentUser } from "../services/authApi";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
-export default function AppShell({ title, subtitle, children }) {
+export default function AppShell({ title, subtitle, children, variant = "" }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
@@ -39,7 +39,9 @@ export default function AppShell({ title, subtitle, children }) {
   }
 
   return (
-    <div className={sidebarCollapsed ? "app-layout sidebar-collapsed" : "app-layout"}>
+    <div
+      className={`app-layout${sidebarCollapsed ? " sidebar-collapsed" : ""}${variant ? ` ${variant}` : ""}`}
+    >
       <Sidebar user={user} collapsed={sidebarCollapsed} onToggleCollapse={handleSidebarToggle} />
       <div className="app-main">
         <Navbar title={title} subtitle={subtitle} user={user} />
