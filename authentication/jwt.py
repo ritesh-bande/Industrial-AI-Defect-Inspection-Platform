@@ -4,6 +4,7 @@ import os
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 import bcrypt
 
 from database.postgres import get_db

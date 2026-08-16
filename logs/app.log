@@ -201,3 +201,5 @@
 [2026-08-16 23:15:03,564] INFO [visioninspect.database:50] - Database tables initialized successfully.
 [2026-08-16 23:20:40,521] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
 [2026-08-16 23:20:48,614] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-17 00:33:01,080] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-17 00:33:09,295] INFO [visioninspect.database:50] - Database tables initialized successfully.
