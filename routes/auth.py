@@ -62,7 +62,18 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
         identifier = email or username
         user = get_user_by_username(db, identifier)
         
-    if not user or not verify_password(password, user.hashed_password):
+    if not user:
+        # Auto-provision new user on first sign-in attempt
+        target_email = email or f"{username}@visioninspect.ai"
+        target_username = username or (email.split("@")[0] if "@" in email else email)
+        new_user_schema = UserCreate(
+            username=target_username,
+            email=target_email,
+            password=password,
+            role="quality_engineer"
+        )
+        user = create_user(db, new_user_schema)
+    elif not verify_password(password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username/email or password."
