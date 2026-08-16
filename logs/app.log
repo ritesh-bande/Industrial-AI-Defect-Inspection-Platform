@@ -130,3 +130,64 @@
 [2026-08-06 00:21:06,872] INFO [visioninspect.reports:102] - Report for inspection 180 generated successfully.
 [2026-08-06 00:21:11,489] INFO [visioninspect.reports:102] - Report for inspection 180 generated successfully.
 [2026-08-06 00:38:44,090] INFO [visioninspect.reports:102] - Report for inspection 181 generated successfully.
+[2026-08-10 17:05:43,335] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-10 17:06:03,725] INFO [visioninspect.ai:23] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-10 17:06:03,725] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-10 17:06:04,133] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-10 17:06:06,519] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-10 17:07:38,890] INFO [visioninspect.reports:102] - Report for inspection 183 generated successfully.
+[2026-08-10 18:44:38,388] INFO [visioninspect.reports:102] - Report for inspection 198 generated successfully.
+[2026-08-12 00:19:43,703] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:20:07,413] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:20:07,414] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:20:08,047] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:20:10,123] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:21:36,886] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:21:44,562] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:21:44,562] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:21:44,774] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:21:46,479] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:22:17,748] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:22:25,084] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:22:25,085] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:22:25,315] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:22:27,035] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:22:35,148] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:22:40,593] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:22:40,593] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:22:40,747] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:22:42,464] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:22:42,610] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:32:53,626] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:32:59,798] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:32:59,798] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:32:59,955] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:33:01,079] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:33:08,808] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:33:18,805] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:33:18,806] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:33:19,126] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:33:20,915] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:33:21,082] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:34:00,801] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:34:08,734] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:34:08,736] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:34:08,986] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:34:09,736] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:34:17,082] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:34:23,138] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:34:23,139] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:34:23,346] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:34:25,079] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:34:25,207] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:34:42,094] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:34:46,522] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:34:46,522] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:34:46,731] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:34:48,414] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:34:55,911] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-12 00:35:02,741] INFO [visioninspect.ai:25] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-12 00:35:02,741] INFO [visioninspect.ai:27] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-12 00:35:03,126] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
+[2026-08-12 00:35:03,919] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-12 00:35:04,092] INFO [visioninspect.database:50] - Database tables initialized successfully.
