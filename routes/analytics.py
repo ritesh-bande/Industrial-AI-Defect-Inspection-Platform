@@ -1,5 +1,6 @@
 import csv
 import io
+from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session

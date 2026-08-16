@@ -191,3 +191,4 @@
 [2026-08-12 00:35:03,126] INFO [visioninspect.ai:65] - Indexed 1718 MVTec ground-truth images for lookup.
 [2026-08-12 00:35:03,919] INFO [visioninspect.database:50] - Database tables initialized successfully.
 [2026-08-12 00:35:04,092] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-16 23:01:35,545] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
