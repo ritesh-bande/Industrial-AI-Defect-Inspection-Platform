@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, User as UserIcon, Settings, Users, Sliders, LogOut } from "lucide-react";
 
 import { logout } from "../services/authApi";
 
@@ -123,15 +123,17 @@ export default function Navbar({ title, subtitle, user }) {
             </button>
             {openMenu === "user" ? (
               <div className="topbar-dropdown user-dropdown">
-                <strong>{user.name}</strong>
-                <small>{user.email || user.role}</small>
-                <div className="dropdown-divider" />
-                <a href="/profile">My Profile</a>
-                <a href="/settings">System Settings</a>
-                <a href="/users">User Management</a>
-                <a href="/model-metrics">Model Calibration</a>
-                <button type="button" onClick={handleLogout}>
-                  Logout
+                <div style={{ padding: '4px 6px 8px 6px' }}>
+                  <strong style={{ color: '#ffffff', fontSize: '14px', display: 'block' }}>{user.name || user.username}</strong>
+                  <small style={{ color: 'var(--neon-lime)', fontSize: '11px', display: 'block', marginTop: '2px' }}>{user.email || user.role}</small>
+                </div>
+                <div className="dropdown-divider" style={{ margin: '4px 0 8px 0', borderColor: 'rgba(255, 255, 255, 0.08)' }} />
+                <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><UserIcon size={16} /> My Profile</a>
+                <a href="/settings" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Settings size={16} /> System Settings</a>
+                <a href="/users" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Users size={16} /> User Management</a>
+                <a href="/model-metrics" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Sliders size={16} /> Model Calibration</a>
+                <button type="button" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444' }}>
+                  <LogOut size={16} /> Logout
                 </button>
               </div>
             ) : null}

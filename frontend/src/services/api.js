@@ -79,10 +79,19 @@ export async function apiRequest(path, options = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...fetchOptions,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...fetchOptions,
+      headers,
+    });
+  } catch (err) {
+    throw new ApiError(`Unable to connect to backend server at ${API_BASE_URL}. Please ensure the backend is running (python backend/main.py).`, {
+      status: 0,
+      code: "NETWORK_ERROR",
+      details: err.message
+    });
+  }
 
   const contentType = response.headers.get("content-type") || "";
   const payload = contentType.includes("application/json") ? await response.json() : await response.text();

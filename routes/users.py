@@ -64,15 +64,21 @@ def update_user_role(
     return db_user
 
 @router.post("/{user_id}/reset-password")
-def admin_reset_password(
+def reset_password(
     user_id: int,
     payload: dict,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Reset a user's password (Admin restricted).
+    Reset a user's password (Allowed if self-update OR admin).
     """
+    if current_user.id != user_id and current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User role '{current_user.role}' has insufficient permissions. Required: ['admin'] or self."
+        )
+        
     password = payload.get("password")
     if not password or len(password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters.")

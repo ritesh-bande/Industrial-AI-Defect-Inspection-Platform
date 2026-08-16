@@ -13,7 +13,9 @@ except ImportError:
     logger.warning("ultralytics (YOLO) is not available. Using simulated object detection.")
 
 class YOLODetector:
-    def __init__(self, model_path="yolov8n.pt"):
+    def __init__(self, model_path=None):
+        if model_path is None:
+            model_path = os.getenv("MODEL_PATH", "yolov8n.pt")
         self.model_path = model_path
         self.model = None
         if YOLO_AVAILABLE:

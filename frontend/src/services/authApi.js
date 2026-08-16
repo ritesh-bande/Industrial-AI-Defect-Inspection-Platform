@@ -1,8 +1,12 @@
 import { apiGet, apiPost, setAuthToken } from "./api";
 
 export async function registerUser(payload) {
+  const derivedUsername = payload.email
+    ? payload.email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "")
+    : (payload.name || "user").toLowerCase().replace(/\s+/g, "_");
+
   const backendPayload = {
-    username: payload.name || payload.username || "",
+    username: derivedUsername || `user_${Date.now()}`,
     email: payload.email,
     password: payload.password,
     role: payload.role || "operator"

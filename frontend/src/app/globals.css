@@ -2694,14 +2694,17 @@ td {
 .topbar-dropdown a,
 .topbar-dropdown button {
   min-height: 38px;
-  display: grid;
-  align-content: center;
-  padding: 8px 10px;
-  border: 1px solid #edf1f6;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  background: #f8fbff;
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
   text-align: left;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .notification-list b {
@@ -2710,7 +2713,14 @@ td {
 
 .topbar-dropdown a,
 .topbar-dropdown button {
-  font-weight: 700;
+  font-weight: 500;
+}
+
+.topbar-dropdown a:hover,
+.topbar-dropdown button:hover {
+  background: rgba(212, 255, 42, 0.12);
+  border-color: rgba(212, 255, 42, 0.4);
+  color: var(--neon-lime);
 }
 
 .topbar-dropdown button {
@@ -3233,13 +3243,25 @@ input:focus, select:focus, textarea:focus {
   border-radius: 12px !important;
 }
 
-.topbar-dropdown a {
-  color: #cbd5e1 !important;
+.topbar-dropdown a,
+.topbar-dropdown button {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
   transition: all 0.2s ease !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  width: 100% !important;
 }
 
-.topbar-dropdown a:hover {
-  background: rgba(212, 255, 42, 0.08) !important;
+.topbar-dropdown a:hover,
+.topbar-dropdown button:hover {
+  background: rgba(212, 255, 42, 0.12) !important;
+  border-color: var(--neon-lime) !important;
   color: var(--neon-lime) !important;
 }
 
@@ -3346,3 +3368,284 @@ option { background-color: #1a1f1d !important; color: var(--text) !important; }
 /* Rounded with white bg */
 .rounded-full.bg-green-100 { background-color: rgba(212,255,42,0.1) !important; }
 .rounded-full.bg-red-100 { background-color: rgba(239,68,68,0.1) !important; }
+
+/* --- Futuristic Cyber Security Login Page Styles --- */
+.cyber-page-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at 50% 50%, #e0f2fe 0%, #bae6fd 60%, #93c5fd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  overflow-x: hidden;
+}
+
+.cyber-login-card {
+  width: min(980px, 100%);
+  min-height: 580px;
+  background: #060919;
+  border-radius: 20px;
+  box-shadow: 0 32px 80px rgba(2, 6, 23, 0.45);
+  display: grid;
+  grid-template-columns: minmax(360px, 480px) 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cyber-form-section {
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  background: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%), #060919;
+}
+
+.cyber-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cyber-brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: grid;
+  place-items: center;
+}
+
+.cyber-brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+}
+
+.cyber-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.cyber-subtitle {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 28px 0;
+}
+
+.cyber-link-btn {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 13.5px;
+  text-decoration: underline;
+}
+
+.cyber-link-btn:hover {
+  color: #7dd3fc;
+}
+
+.cyber-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cyber-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cyber-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cyber-input {
+  width: 100%;
+  height: 44px;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cyber-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.cyber-input:focus {
+  outline: none;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+.cyber-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-toggle-btn:hover {
+  color: #0f172a;
+}
+
+.cyber-error {
+  color: #f87171;
+  font-size: 12.5px;
+  margin: 0;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.cyber-success {
+  color: #34d399;
+  font-size: 12.5px;
+  margin: 0;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.cyber-primary-btn {
+  height: 46px;
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.4);
+}
+
+.cyber-primary-btn:hover {
+  background: #2563eb !important;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+}
+
+.cyber-primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cyber-divider {
+  display: flex;
+  align-items: center;
+  margin: 22px 0 18px 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.cyber-divider::before,
+.cyber-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cyber-divider span {
+  padding: 0 14px;
+}
+
+.social-sso-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sso-btn {
+  height: 44px;
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 22px !important;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sso-btn:hover {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.cyber-graphic-section {
+  position: relative;
+  background: #040714;
+  overflow: hidden;
+}
+
+.cyber-graphic-bg {
+  width: 100%;
+  height: 100%;
+  background: url('/images/tech_shield_bg.jpg') center/cover no-repeat;
+  position: relative;
+}
+
+.cyber-graphic-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(4, 7, 20, 0.6) 100%);
+}
+
+@media (max-width: 840px) {
+  .cyber-login-card {
+    grid-template-columns: 1fr;
+  }
+  .cyber-graphic-section {
+    display: none;
+  }
+  .cyber-form-section {
+    padding: 32px 24px;
+  }
+}

@@ -1,9 +1,55 @@
-@"
-node_modules/
-.venv/
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python / Virtual Environments
 __pycache__/
 *.pyc
-*.db
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Node / Frontend Build Outputs
+node_modules/
+frontend/node_modules/
 .next/
-"@ | Out-File -FilePath .gitignore -Encoding utf8
+frontend/.next/
+out/
+build/
+dist/
+
+# Database & Storage Artifacts
+*.db
+*.sqlite3
+visioninspect.db
+
+# Application Logs
+logs/
+*.log
+
+# Datasets & Large AI Model Weights / Cache
 dataset/
+mvtec_anomaly_detection/
+.cache/
+torch_cache/
+
+# Generated Static Storage Assets (Keep directory structure)
+static/uploads/*
+!static/uploads/.gitkeep
+static/heatmaps/*
+!static/heatmaps/.gitkeep
+static/annotations/*
+!static/annotations/.gitkeep
+static/reports/*
+!static/reports/.gitkeep
+
+# Operating System Files
+.DS_Store
+Thumbs.db

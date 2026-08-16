@@ -1,6 +1,11 @@
 import os
+import sys
 import random
 import logging
+
+# Ensure project root directory is on Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -260,3 +265,7 @@ def health_check():
 def root_redirect():
     """Redirects route root requests directly to FastAPI OpenAPI docs"""
     return RedirectResponse(url="/docs")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
