@@ -2,6 +2,9 @@ import os
 import cv2
 import logging
 
+os.environ["YOLO_OFFLINE"] = "true"
+os.environ["ULTRALYTICS_AUTOINSTALL"] = "false"
+
 logger = logging.getLogger("visioninspect.ai")
 
 # Check if ultralytics is available
