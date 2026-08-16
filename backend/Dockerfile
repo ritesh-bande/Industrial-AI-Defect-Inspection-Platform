@@ -11,18 +11,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend requirements and install dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend application source code and relevant project folders
-COPY . /app/backend/
-COPY ../ai /app/ai
-COPY ../models /app/models
-COPY ../services /app/services
-COPY ../routes /app/routes
-COPY ../database /app/database
-COPY ../authentication /app/authentication
-COPY ../utils /app/utils
+# Copy backend application source code and all project root folders
+COPY backend /app/backend
+COPY ai /app/ai
+COPY models /app/models
+COPY services /app/services
+COPY routes /app/routes
+COPY database /app/database
+COPY authentication /app/authentication
+COPY utils /app/utils
 
 # Ensure static asset and log directories exist
 RUN mkdir -p /app/static/uploads /app/static/heatmaps /app/static/annotations /app/static/reports /app/logs
