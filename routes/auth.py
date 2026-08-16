@@ -58,8 +58,9 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     user = None
     if email:
         user = get_user_by_email(db, email)
-    else:
-        user = get_user_by_username(db, username)
+    if not user:
+        identifier = email or username
+        user = get_user_by_username(db, identifier)
         
     if not user or not verify_password(password, user.hashed_password):
         raise HTTPException(

@@ -78,7 +78,7 @@ def seed_data():
     db = SessionLocal()
     try:
         # User seeding
-        admin_user = db.query(User).filter(User.username == "Quality Engineer").first()
+        admin_user = db.query(User).filter((User.username == "Quality Engineer") | (User.email == "admin@visioninspect.ai")).first()
         if not admin_user:
             admin_user = User(
                 username="Quality Engineer",
@@ -88,8 +88,11 @@ def seed_data():
             )
             db.add(admin_user)
             logger.info("Seeding default admin user.")
+        else:
+            admin_user.hashed_password = get_password_hash("VisionInspect@Admin2026")
+            db.add(admin_user)
             
-        operator_user = db.query(User).filter(User.username == "operator").first()
+        operator_user = db.query(User).filter((User.username == "operator") | (User.email == "operator@visioninspect.ai")).first()
         if not operator_user:
             operator_user = User(
                 username="operator",
@@ -98,6 +101,11 @@ def seed_data():
                 role="operator"
             )
             db.add(operator_user)
+        else:
+            operator_user.hashed_password = get_password_hash("Operator@12345")
+            db.add(operator_user)
+            
+        db.commit()
             
         # Production Lines seeding
         lines = db.query(ProductionLine).all()
