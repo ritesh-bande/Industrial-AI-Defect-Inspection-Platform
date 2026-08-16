@@ -13,32 +13,39 @@ from database.mongo import save_unstructured_metadata
 
 logger = logging.getLogger("visioninspect.ai")
 
-# Load model singletons if possible
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# Lazy model singletons
+device = None
 classification_model = None
 segmentation_model = None
-yolo_detector = YOLODetector()
+yolo_detector = None
+_models_loaded = False
 
-# Load custom classifier/segmenter models gracefully
-try:
-    custom_weights_path = os.path.join("backend", "models", "custom_cnn.pt")
-    if os.path.exists(custom_weights_path):
-        logger.info("Found custom trained CNN weights. Loading custom VisionInspectCNN model.")
-        classification_model = VisionInspectCNN(num_classes=2)
-        classification_model.load_state_dict(torch.load(custom_weights_path, map_location=device))
-    else:
-        logger.info("Custom weights not found. Loading baseline ResNet classification model.")
-        classification_model = DefectClassificationCNN(num_classes=7, backbone="resnet18", pretrained=False)
+def ensure_models_loaded():
+    global _models_loaded, device, classification_model, segmentation_model, yolo_detector
+    if _models_loaded:
+        return
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if yolo_detector is None:
+        yolo_detector = YOLODetector()
+    try:
+        custom_weights_path = os.path.join("backend", "models", "custom_cnn.pt")
+        if os.path.exists(custom_weights_path):
+            logger.info("Found custom trained CNN weights. Loading custom VisionInspectCNN model.")
+            classification_model = VisionInspectCNN(num_classes=2)
+            classification_model.load_state_dict(torch.load(custom_weights_path, map_location=device))
+        else:
+            logger.info("Custom weights not found. Loading baseline ResNet classification model.")
+            classification_model = DefectClassificationCNN(num_classes=7, backbone="resnet18", pretrained=False)
+            
+        classification_model.to(device)
+        classification_model.eval()
         
-    classification_model.to(device)
-    classification_model.eval()
-    
-    segmentation_model = DefectSegmentationUNet(in_channels=3, out_channels=1)
-    segmentation_model.to(device)
-    segmentation_model.eval()
-except Exception as e:
-    logger.warning(f"Could not load classification or segmentation models: {e}. Fallbacks will be used.")
+        segmentation_model = DefectSegmentationUNet(in_channels=3, out_channels=1)
+        segmentation_model.to(device)
+        segmentation_model.eval()
+    except Exception as e:
+        logger.warning(f"Could not load classification or segmentation models: {e}. Fallbacks will be used.")
+    _models_loaded = True
 
 # Build MVTec dataset ground-truth size-lookup index to map uploaded images back to correct classes
 _mvtec_size_index = {}
@@ -88,6 +95,7 @@ class InspectionInferencePipeline:
         """
         inference_start = datetime.utcnow()
         logs = []
+        ensure_models_loaded()
         
         # 1. Image Preprocessing Step
         logs.append(f"[{datetime.utcnow().isoformat()}] Starting image preprocessing.")
