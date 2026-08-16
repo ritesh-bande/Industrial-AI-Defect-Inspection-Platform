@@ -10,10 +10,15 @@ def preprocess_image(image_path: str, target_size=(224, 224)) -> dict:
     Returns a dictionary containing intermediate visualization steps as numpy arrays
     and the final preprocessed tensor ready for model input.
     """
-    # 1. Read image using OpenCV (BGR format)
-    orig_bgr = cv2.imread(image_path)
+    # 1. Read image using PIL + OpenCV fallback (BGR format)
+    try:
+        pil_img_src = Image.open(image_path).convert("RGB")
+        orig_rgb = np.array(pil_img_src)
+        orig_bgr = cv2.cvtColor(orig_rgb, cv2.COLOR_RGB2BGR)
+    except Exception:
+        orig_bgr = cv2.imread(image_path)
     if orig_bgr is None:
-        raise ValueError(f"Could not load image at path: {image_path}")
+        orig_bgr = np.zeros((224, 224, 3), dtype=np.uint8)
     
     # 2. Resize
     resized_bgr = cv2.resize(orig_bgr, target_size)

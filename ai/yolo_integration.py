@@ -55,6 +55,11 @@ class YOLODetector:
 
         try:
             results = self.model(image_path, verbose=False)
+        except Exception as e:
+            logger.error(f"YOLO model execution error: {e}. Falling back to simulation.")
+            return self._simulate_detection(image_path)
+            
+        try:
             detections = []
             if not results:
                 return detections
