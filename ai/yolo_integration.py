@@ -18,11 +18,12 @@ class YOLODetector:
             model_path = os.getenv("MODEL_PATH", "yolov8n.pt")
         self.model_path = model_path
         self.model = None
-        if YOLO_AVAILABLE:
+
+    def _ensure_model_loaded(self):
+        if self.model is None and YOLO_AVAILABLE:
             try:
-                # Load YOLO model (will download yolov8n.pt if not present)
-                self.model = YOLO(model_path)
-                logger.info(f"YOLO model loaded successfully from {model_path}.")
+                self.model = YOLO(self.model_path)
+                logger.info(f"YOLO model loaded successfully from {self.model_path}.")
             except Exception as e:
                 logger.error(f"Failed to load YOLO model: {e}. Falling back to simulation.")
                 self.model = None
@@ -46,6 +47,8 @@ class YOLODetector:
             list of dicts: [ { "box": [xmin, ymin, xmax, ymax], "label": str, "score": float } ]
         """
         threshold = confidence_threshold if confidence_threshold is not None else self.MIN_CONFIDENCE
+
+        self._ensure_model_loaded()
 
         if not YOLO_AVAILABLE or self.model is None:
             return self._simulate_detection(image_path)

@@ -66,8 +66,14 @@ def init_mvtec_index():
     except Exception as e:
         logger.warning(f"Could not initialize MVTec ground-truth index: {e}")
 
-# Initialize the index
-init_mvtec_index()
+# Lazy initialization flag for MVTec index
+_mvtec_index_initialized = False
+
+def ensure_mvtec_index():
+    global _mvtec_index_initialized
+    if not _mvtec_index_initialized:
+        init_mvtec_index()
+        _mvtec_index_initialized = True
 
 
 class InspectionInferencePipeline:
@@ -98,6 +104,7 @@ class InspectionInferencePipeline:
         mvtec_category = None
         mvtec_defect = None
         try:
+            ensure_mvtec_index()
             upload_size = os.path.getsize(image_path)
             if upload_size in _mvtec_size_index:
                 mvtec_category, mvtec_defect = _mvtec_size_index[upload_size]
