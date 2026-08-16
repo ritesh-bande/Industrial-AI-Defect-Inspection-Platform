@@ -4,8 +4,7 @@ import os
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+import bcrypt
 
 from database.postgres import get_db
 from models.models import User
@@ -15,20 +14,24 @@ SECRET_KEY = os.getenv("JWT_SECRET_KEY", "visioninspect_dev_secret_key_2026")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "1440")) # Default 24 Hours
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifies that plain matches hashed password"""
+    """Verifies that plain matches hashed password using native bcrypt"""
     try:
-        return pwd_context.verify(plain_password, hashed_password)
+        if not plain_password or not hashed_password:
+            return False
+        pwd_bytes = str(plain_password).encode('utf-8')[:72]
+        hash_bytes = str(hashed_password).encode('utf-8')
+        return bcrypt.checkpw(pwd_bytes, hash_bytes)
     except Exception:
         return False
 
 def get_password_hash(password: str) -> str:
-    """Generates password hash using bcrypt"""
-    clean_pwd = str(password)[:72]
-    return pwd_context.hash(clean_pwd)
+    """Generates password hash using native bcrypt"""
+    pwd_bytes = str(password).encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Creates a JWT access token"""
