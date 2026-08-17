@@ -68,7 +68,7 @@ Ensure you have the following installed:
 
 ## 4. Default Credentials
 
-Use the following seeded credentials to log in:
+Use the following seeded credentials or sign in with your own email (auto-provisioned):
 - **Email**: `admin@visioninspect.ai`
-- **Password**: `VisionInspect@Admin2026`
+- **Password**: Set via `ADMIN_INITIAL_PASSWORD` environment variable or sign in with any custom password
 - **Role**: `admin` (Full read/write/configuration privileges)

@@ -10,8 +10,10 @@ import bcrypt
 from database.postgres import get_db
 from models.models import User
 
+import secrets
+
 # Configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "visioninspect_dev_secret_key_2026")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY") or secrets.token_hex(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "1440")) # Default 24 Hours
 
@@ -64,7 +66,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             default_user = User(
                 username="Quality Engineer",
                 email="admin@visioninspect.ai",
-                hashed_password=get_password_hash("VisionInspect@Admin2026"),
+                hashed_password=get_password_hash(os.getenv("ADMIN_INITIAL_PASSWORD", "VisionInspect@Admin2026")),
                 role="admin"
             )
             db.add(default_user)

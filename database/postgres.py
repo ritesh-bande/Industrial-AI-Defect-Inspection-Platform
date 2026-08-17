@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 logger = logging.getLogger("visioninspect.database")
 
 # Primary DATABASE_URL fallback to local SQLite
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/visioninspect")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./visioninspect.db")
 
 # Handle standard postgres:// protocol mapping
 if DATABASE_URL.startswith("postgres://"):

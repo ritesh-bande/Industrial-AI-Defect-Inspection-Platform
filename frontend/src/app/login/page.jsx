@@ -51,7 +51,7 @@ export default function LoginPage() {
     setError("");
     setSuccess(`Connecting with ${provider}...`);
     setTimeout(() => {
-      login({ email: "admin@visioninspect.ai", password: "VisionInspect@Admin2026" })
+      login({ email: "sso_user@visioninspect.ai", password: "sso_user_session_2026" })
         .then(() => router.replace("/dashboard"))
         .catch((err) => setError(err.message || "Social login failed"));
     }, 800);
