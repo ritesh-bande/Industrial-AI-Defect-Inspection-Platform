@@ -41,27 +41,42 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Try real backend — if online it enforces proper auth
-      await login({ email: form.email, password: form.password });
-      setAuthToken("authenticated_session_" + Date.now());
-    } catch {
-      // Backend offline → accept any valid-format credentials for demo access
-      setAuthToken("demo_authenticated_session_2026");
+      if (mode === "login") {
+        const authData = await login({ email: form.email, password: form.password });
+        if (authData && authData.access_token) {
+          window.location.href = "/dashboard";
+        } else {
+          setAuthToken(null);
+          setError("Invalid email or password.");
+        }
+      } else {
+        const result = await registerUser(form);
+        if (result && result.access_token) {
+          window.location.href = "/dashboard";
+        } else {
+          setSuccess("Account registered successfully. Please sign in.");
+          setMode("login");
+        }
+      }
+    } catch (err) {
+      setAuthToken(null); // Clear any stored token on failed login
+      const status = err.status;
+      if (status === 403) {
+        setError(err.message || "User account is disabled.");
+      } else if (status === 401) {
+        setError("Invalid email or password.");
+      } else if (status === 400 || status === 422) {
+        setError(err.message || "Invalid credentials format.");
+      } else {
+        setError(err.message || "Invalid email or password.");
+      }
+    } finally {
+      setLoading(false);
     }
-
-    // Redirect in all cases after validation passes
-    window.location.href = "/dashboard";
   }
 
   function handleSocialLogin(provider) {
-    setError("");
-    setSuccess(`Connecting with ${provider}...`);
-    setAuthToken("demo_sso_authenticated_session_2026");
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        window.location.href = "/dashboard";
-      }
-    }, 400);
+    setError(`Social SSO with ${provider} is not enabled. Please sign in with your email and password.`);
   }
 
   return (

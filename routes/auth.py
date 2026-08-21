@@ -30,7 +30,12 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
         )
         
     db_user = create_user(db, user_in)
-    token = create_access_token({"sub": db_user.username})
+    token = create_access_token({
+        "sub": db_user.username,
+        "user_id": db_user.id,
+        "email": db_user.email,
+        "role": db_user.role
+    })
     
     return {
         "access_token": token,
@@ -41,18 +46,26 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 def login(payload: UserLogin, db: Session = Depends(get_db)):
     """
-    Log in using username or email and password.
-    Returns access token and user info.
+    Log in using username or email and password against the user database.
+    Enforces password hash verification and active user status.
+    Returns access token and authenticated user info.
     """
-    # Extract identifiers
     username = payload.username
     email = payload.email
     password = payload.password
     
-    if not username and not email:
+    if not password or (not username and not email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either username or email must be provided."
+            detail="Username/email and password are required."
+        )
+
+    # Validate email format if provided as email
+    target_email = email or (username if "@" in str(username) else None)
+    if target_email and "@" not in target_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid email format."
         )
         
     user = None
@@ -61,25 +74,37 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user:
         identifier = email or username
         user = get_user_by_username(db, identifier)
-        
+    if not user and target_email:
+        user = get_user_by_email(db, target_email)
+
+    # 1. Reject non-existent user
     if not user:
-        # Auto-provision new user on first sign-in attempt
-        target_email = email or f"{username}@visioninspect.ai"
-        target_username = username or (email.split("@")[0] if "@" in email else email)
-        new_user_schema = UserCreate(
-            username=target_username,
-            email=target_email,
-            password=password,
-            role="quality_engineer"
-        )
-        user = create_user(db, new_user_schema)
-    elif not verify_password(password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username/email or password."
+            detail="Invalid email or password."
+        )
+
+    # 2. Reject incorrect password hash match
+    if not verify_password(password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password."
+        )
+
+    # 3. Reject inactive/disabled user account
+    if hasattr(user, "is_active") and user.is_active is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is disabled."
         )
         
-    token = create_access_token({"sub": user.username})
+    token = create_access_token({
+        "sub": user.username,
+        "user_id": user.id,
+        "email": user.email,
+        "role": user.role
+    })
+    
     return {
         "access_token": token,
         "token_type": "bearer",

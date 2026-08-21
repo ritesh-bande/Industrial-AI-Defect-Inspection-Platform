@@ -46,7 +46,15 @@ Base = declarative_base()
 def init_db():
     """Initializes tables in PostgreSQL (or SQLite fallback)"""
     try:
+        import sqlalchemy
         Base.metadata.create_all(bind=engine)
+        # Automatic column migration for sqlite/postgres if is_active is missing
+        with engine.connect() as conn:
+            try:
+                conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN is_active BOOLEAN DEFAULT 1"))
+                conn.commit()
+            except Exception:
+                pass
         logger.info("Database tables initialized successfully.")
     except Exception as e:
         logger.error(f"Error creating database tables: {e}")

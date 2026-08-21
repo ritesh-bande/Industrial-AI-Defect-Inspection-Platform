@@ -49,9 +49,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     """
-    Dependency that decodes token and yields active user.
-    If no token is supplied, returns a seeded default user in local development mode
-    for seamless integration and API debugging.
+    Dependency that decodes JWT token and returns the authenticated active user.
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -60,29 +58,30 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     )
     
     if not token:
-        # Development fallback seed
-        default_user = db.query(User).filter(User.username == "Quality Engineer").first()
-        if not default_user:
-            default_user = User(
-                username="Quality Engineer",
-                email="admin@visioninspect.ai",
-                hashed_password=get_password_hash(os.getenv("ADMIN_INITIAL_PASSWORD", "")),
-                role="admin"
-            )
-            db.add(default_user)
-            db.commit()
-            db.refresh(default_user)
-        return default_user
+        raise credentials_exception
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except jwt.PyJWTError:
         raise credentials_exception
         
-    user = db.query(User).filter(User.username == username).first()
+    user = db.query(User).filter((User.username == username) | (User.email == username)).first()
     if user is None:
         raise credentials_exception
+
+    if hasattr(user, "is_active") and user.is_active is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is disabled.",
+        )
+
     return user

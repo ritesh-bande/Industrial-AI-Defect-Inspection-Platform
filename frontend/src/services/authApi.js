@@ -19,24 +19,17 @@ export async function login(payload) {
     token: null,
   });
 
-  setAuthToken(result.access_token);
+  if (result && result.access_token) {
+    setAuthToken(result.access_token);
+  } else {
+    setAuthToken(null);
+    throw new Error("Authentication failed: No access token returned.");
+  }
   return result;
 }
 
-// Only keep this if backend has GET /api/auth/me
 export async function getCurrentUser() {
-  try {
-    return await apiGet("/api/auth/me");
-  } catch {
-    return {
-      id: 1,
-      username: "quality_engineer",
-      email: "demo@visioninspect.ai",
-      role: "quality_engineer",
-      full_name: "Quality Engineer",
-      is_active: true,
-    };
-  }
+  return apiGet("/api/auth/me");
 }
 
 export function logout() {

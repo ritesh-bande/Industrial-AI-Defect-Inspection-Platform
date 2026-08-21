@@ -205,3 +205,58 @@
 [2026-08-17 00:33:09,295] INFO [visioninspect.database:50] - Database tables initialized successfully.
 [2026-08-21 20:54:25,697] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
 [2026-08-21 20:54:51,395] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-21 21:07:04,331] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:08:48,973] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-21 21:08:49,044] ERROR [visioninspect.main:203] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:09:13,309] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:10:50,105] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-21 21:10:50,298] ERROR [visioninspect.main:207] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:13:57,941] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:14:56,767] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-21 21:14:56,993] ERROR [visioninspect.main:207] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:14:57,563] ERROR [visioninspect.main:207] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:15:36,871] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:15:53,370] INFO [visioninspect.database:50] - Database tables initialized successfully.
+[2026-08-21 21:15:53,386] ERROR [visioninspect.main:207] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:15:53,403] ERROR [visioninspect.main:207] - Error seeding database: (sqlite3.OperationalError) no such column: users.is_active
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = ? OR users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('Quality Engineer', 'admin@visioninspect.ai', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-21 21:16:10,276] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:16:30,929] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-21 21:16:32,724] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:16:35,566] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-21 21:16:56,699] INFO [visioninspect.database:58] - Database tables initialized successfully.

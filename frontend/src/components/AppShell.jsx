@@ -15,25 +15,33 @@ export default function AppShell({ title, subtitle, children, variant = "" }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    if (!getAuthToken()) {
+    const token = getAuthToken();
+    if (!token) {
       router.replace("/login");
       return;
     }
 
     getCurrentUser()
-      .then((u) => setUser(u))
-      .catch(() => {
-        // Backend offline or token invalid — use demo user so app still works
-        setUser({
-          id: 1,
-          username: "quality_engineer",
-          email: "demo@visioninspect.ai",
-          role: "quality_engineer",
-          full_name: "Quality Engineer",
-          is_active: true,
-        });
+      .then((u) => {
+        setUser(u);
+        setReady(true);
       })
-      .finally(() => setReady(true));
+      .catch((err) => {
+        if (err?.status === 401 || err?.status === 403 || err?.code === "UNAUTHORIZED") {
+          setAuthToken(null);
+          router.replace("/login");
+        } else {
+          // Network connection error fallback for offline UI development
+          setUser({
+            id: 1,
+            username: "Quality Engineer",
+            email: "admin@visioninspect.ai",
+            role: "quality_engineer",
+            is_active: true,
+          });
+          setReady(true);
+        }
+      });
   }, [router]);
 
   function handleSidebarToggle() {

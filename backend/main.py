@@ -78,7 +78,7 @@ def seed_data():
     db = SessionLocal()
     try:
         # User seeding
-        admin_pass = os.getenv("ADMIN_INITIAL_PASSWORD", "[REDACTED_PASSWORD]")
+        admin_pass = os.getenv("ADMIN_INITIAL_PASSWORD", "Admin@Vision2026!")
         operator_pass = os.getenv("OPERATOR_INITIAL_PASSWORD", "VisionInspect@Op2026")
 
         admin_user = db.query(User).filter((User.username == "Quality Engineer") | (User.email == "admin@visioninspect.ai")).first()
@@ -87,12 +87,14 @@ def seed_data():
                 username="Quality Engineer",
                 email="admin@visioninspect.ai",
                 hashed_password=get_password_hash(admin_pass),
-                role="admin"
+                role="admin",
+                is_active=True
             )
             db.add(admin_user)
             logger.info("Seeding default admin user.")
         else:
             admin_user.hashed_password = get_password_hash(admin_pass)
+            admin_user.is_active = True
             db.add(admin_user)
             
         operator_user = db.query(User).filter((User.username == "operator") | (User.email == "operator@visioninspect.ai")).first()
@@ -101,11 +103,13 @@ def seed_data():
                 username="operator",
                 email="operator@visioninspect.ai",
                 hashed_password=get_password_hash(operator_pass),
-                role="operator"
+                role="operator",
+                is_active=True
             )
             db.add(operator_user)
         else:
             operator_user.hashed_password = get_password_hash(operator_pass)
+            operator_user.is_active = True
             db.add(operator_user)
             
         db.commit()
