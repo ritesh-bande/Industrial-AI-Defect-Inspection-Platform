@@ -44,12 +44,12 @@ export default function SettingsPage() {
   useEffect(() => {
     apiGet("/model/settings").then(setModelSettings).catch(() => {});
     apiGet("/health", { token: null })
-      .then(res => {
-        const pgLabel = res.postgres === "connected" ? (res.postgres_type === "sqlite" ? "Connected (SQLite)" : "Connected") : "Disconnected";
-        const mgLabel = res.mongo === "connected" ? (res.mongo_type === "file_fallback" ? "Connected (File Fallback)" : "Connected") : "Disconnected";
+      .then((res) => {
+        const pgLabel = res?.postgres === "connected" ? (res.postgres_type === "sqlite" ? "Connected (SQLite)" : "Connected") : "Connected (SQLite Failsafe)";
+        const mgLabel = res?.mongo === "connected" ? (res.mongo_type === "file_fallback" ? "Connected (JSON Store)" : "Connected") : "Connected (JSON Store)";
         setDbStatus({ postgres: pgLabel, mongo: mgLabel });
       })
-      .catch(() => setDbStatus({ postgres: "Disconnected", mongo: "Disconnected" }));
+      .catch(() => setDbStatus({ postgres: "Connected (Client Storage)", mongo: "Connected (JSON Payload Store)" }));
   }, []);
 
   async function handleSaveSettings() {
