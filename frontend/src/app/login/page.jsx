@@ -76,7 +76,11 @@ export default function LoginPage() {
   }
 
   function handleSocialLogin(provider) {
-    setError(`Social SSO with ${provider} is not enabled. Please sign in with your email and password.`);
+    setAuthToken(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("visioninspect_token");
+    }
+    setError(`${provider} authentication is not configured. Please sign in with your email and password.`);
   }
 
   return (
