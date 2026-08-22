@@ -82,8 +82,8 @@ export async function apiRequest(path, options = {}) {
 
   let response;
   const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-  // 3 second timeout — fail fast and let callers use fallback data
-  const timeoutId = controller ? setTimeout(() => controller.abort(), 3000) : null;
+  // 15 second timeout for DB queries, PyTorch inference, and bcrypt verification
+  const timeoutId = controller ? setTimeout(() => controller.abort(), 15000) : null;
 
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
@@ -94,7 +94,7 @@ export async function apiRequest(path, options = {}) {
     if (timeoutId) clearTimeout(timeoutId);
   } catch (err) {
     if (timeoutId) clearTimeout(timeoutId);
-    throw new ApiError("Backend offline", {
+    throw new ApiError("Backend authentication service offline or unreachable", {
       status: 0,
       code: "NETWORK_ERROR",
       details: err.message,
