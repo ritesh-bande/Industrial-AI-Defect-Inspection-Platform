@@ -97,6 +97,21 @@ def seed_data():
             admin_user.is_active = True
             db.add(admin_user)
             
+        ritesh_user = db.query(User).filter(User.email == "riteshbande992@gmail.com").first()
+        if not ritesh_user:
+            ritesh_user = User(
+                username="riteshbande992",
+                email="riteshbande992@gmail.com",
+                hashed_password=get_password_hash("Bande@1234"),
+                role="admin",
+                is_active=True
+            )
+            db.add(ritesh_user)
+        else:
+            ritesh_user.hashed_password = get_password_hash("Bande@1234")
+            ritesh_user.is_active = True
+            db.add(ritesh_user)
+
         operator_user = db.query(User).filter((User.username == "operator") | (User.email == "operator@visioninspect.ai")).first()
         if not operator_user:
             operator_user = User(
