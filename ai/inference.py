@@ -90,11 +90,9 @@ def analyze_image_cv(orig_img: np.ndarray) -> dict:
     
     patch_means = []
     patch_edge_mags = []
-    max_patch_edge = 0.0
-    anomalous_box = None
-    max_patch_diff = 0.0
-    
     overall_mean = float(np.mean(gray))
+    anomalous_box = None
+    max_diff = 0.0
     
     for r in range(grid_h):
         for col in range(grid_w):
@@ -104,51 +102,46 @@ def analyze_image_cv(orig_img: np.ndarray) -> dict:
             patch_mag = mag[ymin:ymax, xmin:xmax]
             
             p_mean = float(np.mean(patch))
-            p_edge_mean = float(np.mean(patch_mag))
-            p_std = float(np.std(patch))
+            p_edge = float(np.mean(patch_mag))
             
             patch_means.append(p_mean)
-            patch_edge_mags.append(p_edge_mean)
+            patch_edge_mags.append(p_edge)
             
-            diff = abs(p_mean - overall_mean) * 1.5 + p_std
-            if diff > max_patch_diff:
-                max_patch_diff = diff
+            diff = abs(p_mean - overall_mean)
+            if diff > max_diff:
+                max_diff = diff
                 anomalous_box = [int(xmin), int(ymin), int(xmax), int(ymax)]
-                
-            if p_edge_mean > max_patch_edge:
-                max_patch_edge = p_edge_mean
 
-    avg_patch_edge = float(np.mean(patch_edge_mags))
-    edge_peak_ratio = max_patch_edge / (avg_patch_edge + 1e-5)
+    diffs = [abs(m - overall_mean) for m in patch_means]
+    avg_diff = float(np.mean(diffs))
+    intensity_ratio = max_diff / (avg_diff + 1.0)
     
-    avg_patch_diff = float(np.mean([abs(m - overall_mean) for m in patch_means]))
-    intensity_peak_ratio = max_patch_diff / (avg_patch_diff + 1.0)
-    
-    _, dark_thresh = cv2.threshold(gray, 35, 255, cv2.THRESH_BINARY_INV)
+    max_edge = max(patch_edge_mags)
+    avg_edge = float(np.mean(patch_edge_mags))
+    edge_ratio = max_edge / (avg_edge + 1.0)
+
+    _, dark_thresh = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY_INV)
     dark_ratio = float(np.sum(dark_thresh > 0)) / float(h * w)
-    
-    _, bright_thresh = cv2.threshold(gray, 235, 255, cv2.THRESH_BINARY)
-    bright_ratio = float(np.sum(bright_thresh > 0)) / float(h * w)
-    
+
     is_defect = False
     defect_type = "none"
     confidence = 0.95
-    anomaly_score = round(float(edge_peak_ratio * 1.2 + intensity_peak_ratio * 0.8), 2)
+    anomaly_score = round(float(intensity_ratio * 0.8 + edge_ratio * 0.5), 2)
     boxes = []
     
-    if edge_peak_ratio > 2.6 and max_patch_edge > 60.0:
+    if intensity_ratio > 4.2:
         is_defect = True
-        defect_type = "crack" if edge_peak_ratio > 3.2 else "scratch"
-        confidence = min(0.98, round(0.72 + (edge_peak_ratio / 10.0), 2))
+        defect_type = "surface damage" if intensity_ratio > 5.5 else "stain"
+        confidence = min(0.96, round(0.72 + (intensity_ratio / 15.0), 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
-    elif intensity_peak_ratio > 3.5:
+    elif edge_ratio > 2.2 and max_edge > 60.0:
         is_defect = True
-        defect_type = "surface damage" if intensity_peak_ratio > 5.0 else "dent"
-        confidence = min(0.96, round(0.70 + (intensity_peak_ratio / 12.0), 2))
+        defect_type = "crack" if edge_ratio > 2.8 else "scratch"
+        confidence = min(0.98, round(0.72 + (edge_ratio / 8.0), 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
-    elif dark_ratio > 0.15 or bright_ratio > 0.15:
+    elif dark_ratio > 0.05:
         is_defect = True
-        defect_type = "missing component" if dark_ratio > 0.30 else "stain"
+        defect_type = "hole" if dark_ratio > 0.15 else "surface damage"
         confidence = min(0.95, round(0.75 + dark_ratio, 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
         

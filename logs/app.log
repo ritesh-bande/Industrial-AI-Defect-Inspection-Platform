@@ -331,3 +331,5 @@ WHERE users.username = ? OR users.email = ?
 [2026-08-22 13:16:27,210] INFO [visioninspect:57] - ========== PASSWORD RESET LINK GENERATED FOR admin@visioninspect.ai ==========
 [2026-08-22 13:16:27,210] INFO [visioninspect:58] - RESET LINK: http://localhost:3001/reset-password?token=NvgbhEw7WPkyfN-ZckcapmwFTvfHUAhtUCxDJRGGd-E
 [2026-08-22 13:16:27,211] INFO [visioninspect:59] - ==================================================================
+[2026-08-22 13:21:49,482] INFO [visioninspect.ai:33] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-22 13:21:50,231] INFO [visioninspect.ai:29] - YOLO model loaded successfully from yolov8n.pt.
