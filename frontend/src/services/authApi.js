@@ -35,3 +35,11 @@ export async function getCurrentUser() {
 export function logout() {
   setAuthToken(null);
 }
+
+export async function requestPasswordReset(email) {
+  return apiPost("/api/auth/forgot-password", { email }, { token: null });
+}
+
+export async function resetPassword(token, newPassword) {
+  return apiPost("/api/auth/reset-password", { token, new_password: newPassword }, { token: null });
+}

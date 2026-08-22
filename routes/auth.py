@@ -117,3 +117,96 @@ def get_me(current_user: User = Depends(get_current_user)):
     Retrieves the current authenticated user profile.
     """
     return current_user
+
+import secrets
+import hashlib
+from datetime import datetime, timedelta
+from models.schemas import ForgotPasswordRequest, ResetPasswordRequest
+from models.models import PasswordResetToken
+from utils.email import send_password_reset_email
+
+@router.post("/forgot-password")
+def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Generates a secure single-use password reset token and sends a reset link.
+    Always returns generic message to prevent email enumeration.
+    """
+    email = payload.email.lower().strip()
+    user = get_user_by_email(db, email)
+    
+    if user and user.is_active:
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+        expires_at = datetime.utcnow() + timedelta(minutes=30)
+        
+        db.query(PasswordResetToken).filter(
+            PasswordResetToken.user_id == user.id,
+            PasswordResetToken.used_at == None
+        ).update({"used_at": datetime.utcnow()})
+        
+        reset_record = PasswordResetToken(
+            user_id=user.id,
+            token_hash=token_hash,
+            expires_at=expires_at
+        )
+        db.add(reset_record)
+        db.commit()
+        
+        send_password_reset_email(user.email, raw_token)
+        
+    return {
+        "message": "If an account exists for this email, a password reset link has been sent."
+    }
+
+@router.post("/reset-password")
+def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Resets user password using a valid single-use token.
+    Updates password hash in DB and invalidates the token.
+    """
+    raw_token = payload.token.strip()
+    if not raw_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This password reset link is invalid or has expired."
+        )
+        
+    token_hash = hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+    
+    token_record = db.query(PasswordResetToken).filter(
+        PasswordResetToken.token_hash == token_hash,
+        PasswordResetToken.used_at == None
+    ).first()
+    
+    if not token_record:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This password reset link is invalid or has expired."
+        )
+        
+    if token_record.expires_at < datetime.utcnow():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This password reset link is invalid or has expired."
+        )
+        
+    user = db.query(User).filter(User.id == token_record.user_id).first()
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This password reset link is invalid or has expired."
+        )
+        
+    user.hashed_password = get_password_hash(payload.new_password)
+    token_record.used_at = datetime.utcnow()
+    
+    db.query(PasswordResetToken).filter(
+        PasswordResetToken.user_id == user.id,
+        PasswordResetToken.used_at == None
+    ).update({"used_at": datetime.utcnow()})
+    
+    db.commit()
+    
+    return {
+        "message": "Your password has been reset successfully."
+    }

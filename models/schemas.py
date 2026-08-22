@@ -14,6 +14,13 @@ class UserLogin(BaseModel):
     email: Optional[str] = None
     password: str
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(..., min_length=1)
+    new_password: str = Field(..., min_length=6)
+
 class UserResponse(BaseModel):
     id: int
     username: str

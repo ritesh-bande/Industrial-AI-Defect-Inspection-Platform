@@ -280,3 +280,20 @@ WHERE users.username = ? OR users.email = ?
 [2026-08-22 12:34:55,725] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
 [2026-08-22 12:35:10,580] INFO [visioninspect.database:58] - Database tables initialized successfully.
 [2026-08-22 12:35:44,740] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:35:56,884] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:45:47,710] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:46:02,825] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:46:11,914] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:46:24,892] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:47:03,364] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:47:17,224] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:49:15,320] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:49:29,469] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:51:53,035] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:52:04,779] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:52:09,617] INFO [visioninspect:57] - ========== PASSWORD RESET LINK GENERATED FOR riteshbande992@gmail.com ==========
+[2026-08-22 12:52:09,618] INFO [visioninspect:58] - RESET LINK: http://localhost:3001/reset-password?token=MKgcYY6p2Ryax3WghpXcFLDD41QF8lrz3Lsuw4U-glY
+[2026-08-22 12:52:09,618] INFO [visioninspect:59] - ==================================================================
+[2026-08-22 12:52:09,732] INFO [visioninspect:57] - ========== PASSWORD RESET LINK GENERATED FOR admin@visioninspect.ai ==========
+[2026-08-22 12:52:09,732] INFO [visioninspect:58] - RESET LINK: http://localhost:3001/reset-password?token=tbDBwRIKlzbNeoek9atKMq0I60rr8QXuDHHIfEYhHtY
+[2026-08-22 12:52:09,733] INFO [visioninspect:59] - ==================================================================

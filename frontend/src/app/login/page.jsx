@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 
 import { login, registerUser } from "../../services/authApi";
@@ -164,7 +165,12 @@ export default function LoginPage() {
             </div>
 
             <div className="cyber-field">
-              <label className="cyber-label">Password</label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                <label className="cyber-label" style={{ marginBottom: 0 }}>Password</label>
+                <Link href="/forgot-password" style={{ color: "#38bdf8", fontSize: "0.85rem", textDecoration: "none", fontWeight: 500 }}>
+                  Forgot password?
+                </Link>
+              </div>
               <div className="password-input-wrap">
                 <input
                   type={showPassword ? "text" : "password"}
