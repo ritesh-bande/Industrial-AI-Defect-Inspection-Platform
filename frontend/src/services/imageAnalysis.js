@@ -151,29 +151,24 @@ function computeMetrics(data, W, H) {
  *   - Fabric, metal, leather, tile, bottle surfaces
  */
 function classify(m) {
-  // Anomaly score components (each 0–10)
-  const varianceScore = Math.min(m.maxPatchVariance * 120, 10);
-  const edgeScore = Math.min(m.edgeDensity * 18, 10);
-  const darkScore = Math.min(m.darkRatio * 50, 10);
-  const spreadScore = Math.min(m.colourSpread * 30, 10);
+  // Compute localized anomaly ratio (filters out uniform woven carpet/fabric textures)
+  const patchRatio = m.maxPatchVariance / (m.meanPatchVariance + 1e-5);
+  
+  const varianceScore = patchRatio > 2.5 ? Math.min((patchRatio - 2.5) * 2.5, 10) : 0.0;
+  const darkScore = Math.min(m.darkRatio * 40, 10);
+  const spreadScore = Math.min(m.colourSpread * 20, 10);
 
   // Weighted anomaly score
-  const anomalyScore =
-    varianceScore * 0.40 +
-    edgeScore * 0.30 +
-    darkScore * 0.20 +
-    spreadScore * 0.10;
+  const anomalyScore = varianceScore * 0.60 + darkScore * 0.25 + spreadScore * 0.15;
 
-  const isDefect = anomalyScore >= 4.5;
-  const confidence = Math.min(0.70 + Math.abs(anomalyScore - 4.5) * 0.04, 0.98);
+  const isDefect = anomalyScore >= 4.2;
+  const confidence = Math.min(0.70 + Math.abs(anomalyScore - 4.2) * 0.04, 0.98);
 
-  // Determine defect type from dominant signal
   let defectType = "none";
   if (isDefect) {
-    if (m.darkRatio > 0.08) defectType = "dark spot / hole";
-    else if (m.edgeDensity > 0.35) defectType = "surface crack";
-    else if (m.maxPatchVariance > 0.06) defectType = "texture irregularity";
-    else if (m.colourSpread > 0.15) defectType = "colour anomaly / stain";
+    if (m.darkRatio > 0.12) defectType = "stain / hole";
+    else if (patchRatio > 3.5) defectType = "surface crack";
+    else if (m.colourSpread > 0.18) defectType = "colour anomaly";
     else defectType = "surface defect";
   }
 

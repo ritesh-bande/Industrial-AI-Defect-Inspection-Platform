@@ -75,11 +75,8 @@ def init_mvtec_index():
 
 def analyze_image_cv(orig_img: np.ndarray) -> dict:
     """
-    Performs real Computer Vision pixel-level defect analysis:
-    - Sobel Edge Density & High-Frequency Gradient Variance
-    - Local Patch Intensity Anomaly & Variance
-    - Dark Spot / Stain Threshold Ratio
-    Returns dict: { "is_defect": bool, "defect_type": str, "confidence": float, "anomaly_score": float, "boxes": list }
+    Performs real Computer Vision texture & anomaly defect analysis.
+    Distinguishes uniform textures (carpets, fabrics, grids) from localized defects (cracks, cuts, stains, holes).
     """
     h, w, c = orig_img.shape
     gray = cv2.cvtColor(orig_img, cv2.COLOR_BGR2GRAY)
@@ -87,15 +84,15 @@ def analyze_image_cv(orig_img: np.ndarray) -> dict:
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
     mag = np.sqrt(sobelx**2 + sobely**2)
-    mean_mag = float(np.mean(mag))
-    std_mag = float(np.std(mag))
-    max_mag = float(np.max(mag))
     
     grid_h, grid_w = 8, 8
     patch_h, patch_w = h // grid_h, w // grid_w
+    
     patch_means = []
-    max_patch_score = 0.0
+    patch_edge_mags = []
+    max_patch_edge = 0.0
     anomalous_box = None
+    max_patch_diff = 0.0
     
     overall_mean = float(np.mean(gray))
     
@@ -104,40 +101,55 @@ def analyze_image_cv(orig_img: np.ndarray) -> dict:
             ymin, ymax = r * patch_h, (r + 1) * patch_h
             xmin, xmax = col * patch_w, (col + 1) * patch_w
             patch = gray[ymin:ymax, xmin:xmax]
-            patch_mean = float(np.mean(patch))
-            patch_std = float(np.std(patch))
-            patch_means.append(patch_mean)
+            patch_mag = mag[ymin:ymax, xmin:xmax]
             
-            diff = abs(patch_mean - overall_mean) + (patch_std * 0.5)
-            if diff > max_patch_score:
-                max_patch_score = diff
+            p_mean = float(np.mean(patch))
+            p_edge_mean = float(np.mean(patch_mag))
+            p_std = float(np.std(patch))
+            
+            patch_means.append(p_mean)
+            patch_edge_mags.append(p_edge_mean)
+            
+            diff = abs(p_mean - overall_mean) * 1.5 + p_std
+            if diff > max_patch_diff:
+                max_patch_diff = diff
                 anomalous_box = [int(xmin), int(ymin), int(xmax), int(ymax)]
                 
-    patch_var = float(np.var(patch_means))
+            if p_edge_mean > max_patch_edge:
+                max_patch_edge = p_edge_mean
+
+    avg_patch_edge = float(np.mean(patch_edge_mags))
+    edge_peak_ratio = max_patch_edge / (avg_patch_edge + 1e-5)
     
-    _, dark_thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+    avg_patch_diff = float(np.mean([abs(m - overall_mean) for m in patch_means]))
+    intensity_peak_ratio = max_patch_diff / (avg_patch_diff + 1.0)
+    
+    _, dark_thresh = cv2.threshold(gray, 35, 255, cv2.THRESH_BINARY_INV)
     dark_ratio = float(np.sum(dark_thresh > 0)) / float(h * w)
+    
+    _, bright_thresh = cv2.threshold(gray, 235, 255, cv2.THRESH_BINARY)
+    bright_ratio = float(np.sum(bright_thresh > 0)) / float(h * w)
     
     is_defect = False
     defect_type = "none"
     confidence = 0.95
-    anomaly_score = round(float(mean_mag * 0.1 + std_mag * 0.05 + patch_var * 0.01), 2)
+    anomaly_score = round(float(edge_peak_ratio * 1.2 + intensity_peak_ratio * 0.8), 2)
     boxes = []
     
-    if std_mag > 45.0 or max_mag > 240.0:
+    if edge_peak_ratio > 2.6 and max_patch_edge > 60.0:
         is_defect = True
-        defect_type = "crack" if std_mag > 55.0 else "scratch"
-        confidence = min(0.98, round(0.70 + (std_mag / 150.0), 2))
+        defect_type = "crack" if edge_peak_ratio > 3.2 else "scratch"
+        confidence = min(0.98, round(0.72 + (edge_peak_ratio / 10.0), 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
-    elif patch_var > 300.0 or max_patch_score > 65.0:
+    elif intensity_peak_ratio > 3.5:
         is_defect = True
-        defect_type = "surface damage" if patch_var > 450.0 else "dent"
-        confidence = min(0.96, round(0.70 + (patch_var / 800.0), 2))
+        defect_type = "surface damage" if intensity_peak_ratio > 5.0 else "dent"
+        confidence = min(0.96, round(0.70 + (intensity_peak_ratio / 12.0), 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
-    elif dark_ratio > 0.08:
+    elif dark_ratio > 0.15 or bright_ratio > 0.15:
         is_defect = True
-        defect_type = "missing component" if dark_ratio > 0.20 else "surface damage"
-        confidence = min(0.95, round(0.72 + dark_ratio, 2))
+        defect_type = "missing component" if dark_ratio > 0.30 else "stain"
+        confidence = min(0.95, round(0.75 + dark_ratio, 2))
         boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
         
     return {
