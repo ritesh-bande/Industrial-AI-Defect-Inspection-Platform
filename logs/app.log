@@ -269,3 +269,9 @@ WHERE users.username = ? OR users.email = ?
 [2026-08-22 11:50:22,393] INFO [visioninspect.database:58] - Database tables initialized successfully.
 [2026-08-22 11:55:46,332] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
 [2026-08-22 11:55:55,852] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:01:59,035] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:02:11,545] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:06:16,191] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:06:26,386] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 12:18:34,638] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 12:18:43,201] INFO [visioninspect.database:58] - Database tables initialized successfully.
