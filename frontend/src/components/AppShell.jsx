@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getAuthToken } from "../services/api";
+import { getAuthToken, setAuthToken } from "../services/api";
 import { getCurrentUser } from "../services/authApi";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
