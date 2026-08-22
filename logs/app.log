@@ -333,3 +333,9 @@ WHERE users.username = ? OR users.email = ?
 [2026-08-22 13:16:27,211] INFO [visioninspect:59] - ==================================================================
 [2026-08-22 13:21:49,482] INFO [visioninspect.ai:33] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
 [2026-08-22 13:21:50,231] INFO [visioninspect.ai:29] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-22 13:30:05,339] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 13:30:17,331] INFO [visioninspect.database:58] - Database tables initialized successfully.
+[2026-08-22 13:31:37,209] INFO [visioninspect.ai:33] - Found custom trained CNN weights. Loading custom VisionInspectCNN model.
+[2026-08-22 13:31:37,930] INFO [visioninspect.ai:29] - YOLO model loaded successfully from yolov8n.pt.
+[2026-08-22 13:45:27,259] INFO [visioninspect:57] - Logging infrastructure initialized successfully.
+[2026-08-22 13:45:38,777] INFO [visioninspect.database:58] - Database tables initialized successfully.
