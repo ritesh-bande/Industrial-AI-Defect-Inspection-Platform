@@ -26,21 +26,21 @@ def run_image_inspection(db: Session, file_path: str, filename: str, metadata: d
             active_model_type=active_model
         )
     except Exception as e:
-        logger.error(f"Inference error in pipeline: {e}. Using fallback inspection result.")
+        logger.error(f"Inference error in pipeline: {e}. Using fail-safe fallback inspection result.")
         result = {
-            "prediction": "Pass",
-            "defect_type": "none",
-            "severity_level": "none",
-            "score": 9.5,
+            "prediction": "Fail",
+            "defect_type": "inspection_error",
+            "severity_level": "high",
+            "score": 1.5,
             "heatmap_url": f"/static/uploads/{filename}",
             "mongo_data": {
-                "prediction": "Pass",
-                "defect_type": "none",
-                "severity_level": "none",
-                "confidence_score": 0.95,
+                "prediction": "Fail",
+                "defect_type": "inspection_error",
+                "severity_level": "high",
+                "confidence_score": 0.0,
                 "bounding_boxes": [],
                 "processing_speed_ms": 45,
-                "pipeline_logs": ["Pipeline executed with fallback handler."],
+                "pipeline_logs": [f"Pipeline execution error: {e}"],
                 "timestamp": datetime.utcnow().isoformat()
             }
         }

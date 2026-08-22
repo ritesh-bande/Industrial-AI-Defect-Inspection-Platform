@@ -73,15 +73,80 @@ def init_mvtec_index():
     except Exception as e:
         logger.warning(f"Could not initialize MVTec ground-truth index: {e}")
 
-# Lazy initialization flag for MVTec index
-_mvtec_index_initialized = False
-
-def ensure_mvtec_index():
-    global _mvtec_index_initialized
-    if not _mvtec_index_initialized:
-        init_mvtec_index()
-        _mvtec_index_initialized = True
-
+def analyze_image_cv(orig_img: np.ndarray) -> dict:
+    """
+    Performs real Computer Vision pixel-level defect analysis:
+    - Sobel Edge Density & High-Frequency Gradient Variance
+    - Local Patch Intensity Anomaly & Variance
+    - Dark Spot / Stain Threshold Ratio
+    Returns dict: { "is_defect": bool, "defect_type": str, "confidence": float, "anomaly_score": float, "boxes": list }
+    """
+    h, w, c = orig_img.shape
+    gray = cv2.cvtColor(orig_img, cv2.COLOR_BGR2GRAY)
+    
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+    mag = np.sqrt(sobelx**2 + sobely**2)
+    mean_mag = float(np.mean(mag))
+    std_mag = float(np.std(mag))
+    max_mag = float(np.max(mag))
+    
+    grid_h, grid_w = 8, 8
+    patch_h, patch_w = h // grid_h, w // grid_w
+    patch_means = []
+    max_patch_score = 0.0
+    anomalous_box = None
+    
+    overall_mean = float(np.mean(gray))
+    
+    for r in range(grid_h):
+        for col in range(grid_w):
+            ymin, ymax = r * patch_h, (r + 1) * patch_h
+            xmin, xmax = col * patch_w, (col + 1) * patch_w
+            patch = gray[ymin:ymax, xmin:xmax]
+            patch_mean = float(np.mean(patch))
+            patch_std = float(np.std(patch))
+            patch_means.append(patch_mean)
+            
+            diff = abs(patch_mean - overall_mean) + (patch_std * 0.5)
+            if diff > max_patch_score:
+                max_patch_score = diff
+                anomalous_box = [int(xmin), int(ymin), int(xmax), int(ymax)]
+                
+    patch_var = float(np.var(patch_means))
+    
+    _, dark_thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+    dark_ratio = float(np.sum(dark_thresh > 0)) / float(h * w)
+    
+    is_defect = False
+    defect_type = "none"
+    confidence = 0.95
+    anomaly_score = round(float(mean_mag * 0.1 + std_mag * 0.05 + patch_var * 0.01), 2)
+    boxes = []
+    
+    if std_mag > 45.0 or max_mag > 240.0:
+        is_defect = True
+        defect_type = "crack" if std_mag > 55.0 else "scratch"
+        confidence = min(0.98, round(0.70 + (std_mag / 150.0), 2))
+        boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
+    elif patch_var > 300.0 or max_patch_score > 65.0:
+        is_defect = True
+        defect_type = "surface damage" if patch_var > 450.0 else "dent"
+        confidence = min(0.96, round(0.70 + (patch_var / 800.0), 2))
+        boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
+    elif dark_ratio > 0.08:
+        is_defect = True
+        defect_type = "missing component" if dark_ratio > 0.20 else "surface damage"
+        confidence = min(0.95, round(0.72 + dark_ratio, 2))
+        boxes = [anomalous_box] if anomalous_box else [[int(w*0.35), int(h*0.35), int(w*0.65), int(h*0.65)]]
+        
+    return {
+        "is_defect": is_defect,
+        "defect_type": defect_type,
+        "confidence": confidence,
+        "anomaly_score": anomaly_score,
+        "boxes": boxes
+    }
 
 class InspectionInferencePipeline:
     def __init__(self):
@@ -106,104 +171,89 @@ class InspectionInferencePipeline:
             h_orig, w_orig, _ = orig_img.shape
         except Exception as e:
             logger.error(f"Preprocessing failed: {e}")
-            return {"prediction": "Pass", "defect_type": "none", "severity_level": "none", "score": 0.0, "heatmap_url": ""}
+            return {
+                "prediction": "Fail",
+                "defect_type": "inspection_error",
+                "severity_level": "high",
+                "score": 0.0,
+                "heatmap_url": "",
+                "mongo_data": {
+                    "prediction": "Fail",
+                    "defect_type": "inspection_error",
+                    "severity_level": "high",
+                    "confidence_score": 0.0,
+                    "bounding_boxes": [],
+                    "processing_speed_ms": 0,
+                    "pipeline_logs": [f"Preprocessing error: {e}"],
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+            }
 
-        # 2. Lookup upload size to see if it is a known MVTec sample with ground truth
-        mvtec_category = None
-        mvtec_defect = None
-        try:
-            ensure_mvtec_index()
-            upload_size = os.path.getsize(image_path)
-            if upload_size in _mvtec_size_index:
-                mvtec_category, mvtec_defect = _mvtec_size_index[upload_size]
-                logs.append(f"[{datetime.utcnow().isoformat()}] MVTec sample match found: category='{mvtec_category}', true_defect='{mvtec_defect}'.")
-        except Exception as e:
-            logger.warning(f"Error checking size: {e}")
-
-        # 3. Defect Detection & Classification
+        # Defect Detection & Classification using Real AI Models & Computer Vision
         prediction = "Pass"
         defect_type = "none"
         confidence_score = 0.95
         bounding_boxes = []
         severity_level = "none"
 
-        # Apply MVTec ground-truth if available, otherwise fallback to YOLO/CNN/Heuristics
-        if mvtec_defect is not None:
-            if mvtec_defect == "good":
-                prediction = "Pass"
-                defect_type = "none"
-                confidence_score = 0.96
-                bounding_boxes = []
-            else:
+        if active_model_type == "yolo":
+            logs.append(f"[{datetime.utcnow().isoformat()}] Running YOLO object detection model.")
+            yolo_boxes = yolo_detector.detect(image_path)
+            if yolo_boxes:
                 prediction = "Fail"
-                defect_type = mvtec_defect.replace("_", " ")
-                confidence_score = 0.88 + (0.01 * (upload_size % 10))
-                # Generate a bounding box in the center representing the defect
-                xmin, ymin = int(w_orig * 0.35), int(h_orig * 0.35)
-                xmax, ymax = int(w_orig * 0.65), int(h_orig * 0.65)
-                bounding_boxes = [[xmin, ymin, xmax, ymax]]
-            logs.append(f"[{datetime.utcnow().isoformat()}] Using ground-truth prediction from dataset index: {prediction} ({defect_type}).")
-        else:
-            # Traditional pipeline fallback
-            if active_model_type == "yolo":
-                logs.append(f"[{datetime.utcnow().isoformat()}] Running YOLO object detection model.")
-                yolo_boxes = yolo_detector.detect(image_path)
-                if yolo_boxes:
-                    prediction = "Fail"
-                    yolo_boxes = sorted(yolo_boxes, key=lambda x: x["score"], reverse=True)
-                    defect_type = yolo_boxes[0]["label"]
-                    confidence_score = yolo_boxes[0]["score"]
-                    bounding_boxes = [box["box"] for box in yolo_boxes]
-                    logs.append(f"[{datetime.utcnow().isoformat()}] YOLO detected: {defect_type} (conf: {confidence_score}).")
-                else:
-                    # Smart heuristic fallback: check if filename contains defect keywords
-                    filename = os.path.basename(image_path).lower()
-                    is_anomaly = any(x in filename for x in ["defect", "contamination", "broken", "scratch", "dent", "missing", "crack"])
-                    if is_anomaly:
-                        prediction = "Fail"
-                        defect_type = "scratch"
-                        confidence_score = 0.82
-                        xmin, ymin = int(w_orig * 0.35), int(h_orig * 0.35)
-                        xmax, ymax = int(w_orig * 0.65), int(h_orig * 0.65)
-                        bounding_boxes = [[xmin, ymin, xmax, ymax]]
-                    else:
-                        prediction = "Pass"
-                        defect_type = "none"
-                        confidence_score = 0.95
-                        bounding_boxes = []
+                yolo_boxes = sorted(yolo_boxes, key=lambda x: x["score"], reverse=True)
+                defect_type = yolo_boxes[0]["label"].replace("_", " ")
+                confidence_score = float(yolo_boxes[0]["score"])
+                bounding_boxes = [box["box"] for box in yolo_boxes]
+                logs.append(f"[{datetime.utcnow().isoformat()}] YOLO detected: {defect_type} (conf: {confidence_score}).")
             else:
-                # Custom CNN classification
-                logs.append(f"[{datetime.utcnow().isoformat()}] Running custom PyTorch CNN classification.")
-                if classification_model is not None:
-                    tensor_input = prepped["tensor"].unsqueeze(0).to(device)
-                    with torch.no_grad():
-                        logits = classification_model(tensor_input)
-                        probabilities = torch.softmax(logits, dim=1).squeeze(0).cpu().numpy()
-                        
-                    pred_class_idx = int(np.argmax(probabilities))
-                    confidence_score = float(probabilities[pred_class_idx])
-                    
-                    is_custom = isinstance(classification_model, VisionInspectCNN)
-                    if is_custom:
-                        pred_label = "defect" if pred_class_idx == 0 else "good"
-                    else:
-                        pred_label = self.classes[pred_class_idx]
-                    
-                    if pred_label == "defect" or (not is_custom and pred_label != "good"):
-                        prediction = "Fail"
-                        defect_type = "scratch"
-                        xmin, ymin = int(w_orig * 0.35), int(h_orig * 0.35)
-                        xmax, ymax = int(w_orig * 0.65), int(h_orig * 0.65)
-                        bounding_boxes = [[xmin, ymin, xmax, ymax]]
-                    else:
-                        prediction = "Pass"
-                        defect_type = "none"
-                        bounding_boxes = []
+                # Real Computer Vision pixel-level anomaly analysis on image tensor
+                logs.append(f"[{datetime.utcnow().isoformat()}] Running pixel-level Computer Vision defect analysis.")
+                cv_res = analyze_image_cv(orig_img)
+                if cv_res["is_defect"]:
+                    prediction = "Fail"
+                    defect_type = cv_res["defect_type"]
+                    confidence_score = cv_res["confidence"]
+                    bounding_boxes = cv_res["boxes"]
+                    logs.append(f"[{datetime.utcnow().isoformat()}] CV Engine detected: {defect_type} (score: {cv_res['anomaly_score']}).")
                 else:
                     prediction = "Pass"
                     defect_type = "none"
                     confidence_score = 0.95
                     bounding_boxes = []
+        else:
+            # Custom CNN classification
+            logs.append(f"[{datetime.utcnow().isoformat()}] Running custom PyTorch CNN classification.")
+            if classification_model is not None:
+                tensor_input = prepped["tensor"].unsqueeze(0).to(device)
+                with torch.no_grad():
+                    logits = classification_model(tensor_input)
+                    probabilities = torch.softmax(logits, dim=1).squeeze(0).cpu().numpy()
+                    
+                pred_class_idx = int(np.argmax(probabilities))
+                confidence_score = float(probabilities[pred_class_idx])
+                
+                is_custom = isinstance(classification_model, VisionInspectCNN)
+                if is_custom:
+                    pred_label = "defect" if pred_class_idx == 0 else "good"
+                else:
+                    pred_label = self.classes[pred_class_idx]
+                
+                if pred_label == "defect" or (not is_custom and pred_label != "good"):
+                    prediction = "Fail"
+                    defect_type = "scratch"
+                    xmin, ymin = int(w_orig * 0.35), int(h_orig * 0.35)
+                    xmax, ymax = int(w_orig * 0.65), int(h_orig * 0.65)
+                    bounding_boxes = [[xmin, ymin, xmax, ymax]]
+                else:
+                    prediction = "Pass"
+                    defect_type = "none"
+                    bounding_boxes = []
+            else:
+                prediction = "Pass"
+                defect_type = "none"
+                confidence_score = 0.95
+                bounding_boxes = []
 
         # 4. Generate Anomaly Heatmap (ALWAYS generate heatmap for both Pass and Fail images)
         logs.append(f"[{datetime.utcnow().isoformat()}] Generating defect heatmap overlay.")

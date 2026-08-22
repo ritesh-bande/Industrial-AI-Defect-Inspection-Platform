@@ -95,36 +95,6 @@ class YOLODetector:
 
     def _simulate_detection(self, image_path: str) -> list:
         """
-        Fall back simulation that generates bounding boxes for demonstration.
+        Fallback simulation return empty detections list so main CV engine analyzes pixels.
         """
-        filename = os.path.basename(image_path).lower()
-        detections = []
-        
-        # If the image filename suggests a defect, generate simulated bounding boxes
-        if "defect" in filename or "contamination" in filename or "broken" in filename or "scratch" in filename:
-            # Load original image size
-            img = cv2.imread(image_path)
-            if img is not None:
-                h, w, _ = img.shape
-                # Create a sample defect box in the center
-                xmin = int(w * 0.35)
-                ymin = int(h * 0.40)
-                xmax = int(w * 0.65)
-                ymax = int(h * 0.60)
-                
-                label = "scratch"
-                if "contamination" in filename:
-                    label = "surface_damage"
-                elif "broken" in filename:
-                    label = "crack"
-                elif "missing" in filename:
-                    label = "missing_component"
-                elif "dent" in filename:
-                    label = "dent"
-                    
-                detections.append({
-                    "box": [xmin, ymin, xmax, ymax],
-                    "label": label,
-                    "score": 0.842
-                })
-        return detections
+        return []
